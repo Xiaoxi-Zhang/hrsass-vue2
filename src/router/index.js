@@ -10,7 +10,7 @@ export const constantRoutes = [
   {
     path: '/login',
     component: () => import('@/views/login/index'),
-    hidden: true
+    hidden: true // 登录页面路由不会显示在导航菜单中  标记路由是否在导航菜单中隐藏：当 hidden: true 时，表示该路由不应该在侧边栏导航菜单中显示
   },
 
   {
