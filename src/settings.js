@@ -1,16 +1,16 @@
 module.exports = {
 
-  title: 'Vue Admin Template',
+  title: '破产公司资源管理平台',
 
   /**
    * @type {boolean} true | false
-   * @description Whether fix the header
+   * @description 让头部固定定位
    */
   fixedHeader: false,
 
   /**
    * @type {boolean} true | false
-   * @description Whether show the logo in sidebar
+   * @description 控制侧边栏头部logo图标的隐藏和显示
    */
   sidebarLogo: false
 }
