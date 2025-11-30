@@ -20,6 +20,10 @@ import router from './router'
 // 要执行 icons目录下的index.js
 import '@/icons' // icon
 import '@/permission' // permission control
+import request from '@/utils/request'
+
+// 目标：this.$request 在Vue的原型对象上（原型对象上的属性和方法可以被实例所访问）
+Vue.prototype.$request = request
 
 // 注册element-ui中的全局组件
 // set ElementUI lang to EN
