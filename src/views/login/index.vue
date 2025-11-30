@@ -52,6 +52,8 @@
         </span>
       </el-form-item>
 
+      <!-- @click.native.prevent -->
+      <!-- .native的作用：给组件的最外层标签绑定原生事件 -->
       <el-button
         :loading="loading"
         type="primary"
@@ -114,19 +116,15 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
+      this.$refs.loginForm.validate(async(flag) => {
+        if (!flag) return
+        // console.log('可以发送请求了')
+        const res = await this.$request({
+          url: 'http://ihrm-java.itheima.net/api/sys/login',
+          method: 'POST',
+          data: this.loginForm
+        })
+        console.log(res)
       })
     }
   }
