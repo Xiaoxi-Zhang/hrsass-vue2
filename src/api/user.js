@@ -1,24 +1,14 @@
 import request from '@/utils/request'
 
-export function login(data) {
+/**
+ * 登录接口
+ * @param {*} loginForm 参数
+ * @returns
+ */
+export const loginApi = (loginForm) => {
   return request({
-    url: '/vue-admin-template/user/login',
-    method: 'post',
-    data
-  })
-}
-
-export function getInfo(token) {
-  return request({
-    url: '/vue-admin-template/user/info',
-    method: 'get',
-    params: { token }
-  })
-}
-
-export function logout() {
-  return request({
-    url: '/vue-admin-template/user/logout',
-    method: 'post'
+    url: '/sys/login',
+    method: 'POST',
+    data: loginForm
   })
 }
