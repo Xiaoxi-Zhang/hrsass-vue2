@@ -1,12 +1,14 @@
 import { loginApi } from '@/api/user'
+import { getToken, setToken } from '@/utils/auth'
 
 const state = {
-  token: ''
+  token: getToken() || ''
 }
 
 const mutations = {
   setToken(state, newToken) {
     state.token = newToken
+    setToken(newToken)
   }
 }
 
