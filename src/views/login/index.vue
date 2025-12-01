@@ -79,7 +79,7 @@ export default {
     return {
       loginForm: {
         mobile: '13800000002',
-        password: '123456'
+        password: '929itheima.CN032@.20251201'
       },
       loginRules: {
         mobile: [
@@ -88,7 +88,7 @@ export default {
         ],
         password: [
           { required: true, trigger: 'blur', message: '密码不可为空' },
-          { min: 6, max: 16, message: '密码长度在6-16位之间', trigger: 'blur' }
+          { min: 6, max: 30, message: '密码长度在6-20位之间', trigger: 'blur' }
         ]
       },
       loading: false,
@@ -119,12 +119,7 @@ export default {
       this.$refs.loginForm.validate(async(flag) => {
         if (!flag) return
         // console.log('可以发送请求了')
-        const res = await this.$request({
-          url: 'http://ihrm-java.itheima.net/api/sys/login',
-          method: 'POST',
-          data: this.loginForm
-        })
-        console.log(res)
+        this.$store.dispatch('user/login', this.loginForm)
       })
     }
   }
