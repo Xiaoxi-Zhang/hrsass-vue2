@@ -32,6 +32,10 @@ service.interceptors.response.use(function(response) {
   return response.data
 }, function(error) {
   // 对响应错误做点什么
+  // 状态码为非2xx 进行统一提示
+  if (error.response) {
+    Message.error(error.response.data.message)
+  }
   return Promise.reject(error)
 })
 
