@@ -79,7 +79,7 @@ export default {
     return {
       loginForm: {
         mobile: '13800000002',
-        password: '929itheima.CN032@.20251201'
+        password: '929itheima.CN032@.20251202'
       },
       loginRules: {
         mobile: [
@@ -119,7 +119,10 @@ export default {
       this.$refs.loginForm.validate(async(flag) => {
         if (!flag) return
         // console.log('可以发送请求了')
-        this.$store.dispatch('user/login', this.loginForm)
+        await this.$store.dispatch('user/login', this.loginForm)
+        // console.log(res)
+        // 跳转的时候，拿到响应结果。如果用户名密码正确，再跳转到首页，如果错误提示
+        this.$router.push('/')
       })
     }
   }
