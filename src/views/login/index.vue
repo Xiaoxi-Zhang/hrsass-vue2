@@ -119,10 +119,17 @@ export default {
       this.$refs.loginForm.validate(async(flag) => {
         if (!flag) return
         // console.log('可以发送请求了')
-        await this.$store.dispatch('user/login', this.loginForm)
-        // console.log(res)
-        // 跳转的时候，拿到响应结果。如果用户名密码正确，再跳转到首页，如果错误提示
-        this.$router.push('/')
+        // 接口请求之前开始 进行加载中，响应之后 取消加载中的状态
+        this.loading = true
+        try {
+          await this.$store.dispatch('user/login', this.loginForm)
+          // console.log(res)
+          // 跳转的时候，拿到响应结果。如果用户名密码正确，再跳转到首页，如果错误提示
+          this.$router.push('/')
+        } finally {
+          // 不管你前边执行的 try 还是 catch 最后都会执行 finally
+          this.loading = false
+        }
       })
     }
   }
