@@ -64,3 +64,8 @@ div:focus {
 .app-container {
   padding: 20px;
 }
+
+#nprogress .bar {
+  background-color: blue !important;
+  height: 4px !important;
+}
