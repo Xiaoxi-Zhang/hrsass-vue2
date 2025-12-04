@@ -12,3 +12,14 @@ export const loginApi = (loginForm) => {
     data: loginForm
   })
 }
+
+/**
+ *
+ * @returns 获取用户信息
+ */
+export const getUserProfileAPI = () => {
+  return request({
+    url: '/sys/profile',
+    method: 'POST'
+  })
+}
