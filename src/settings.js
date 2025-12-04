@@ -12,5 +12,5 @@ module.exports = {
    * @type {boolean} true | false
    * @description 控制侧边栏头部logo图标的隐藏和显示
    */
-  sidebarLogo: false
+  sidebarLogo: true // 显示logo
 }
