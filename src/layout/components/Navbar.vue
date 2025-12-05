@@ -38,7 +38,6 @@
 import { mapGetters } from 'vuex'
 // import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import { getUserProfileAPI } from '@/api/user'
 
 export default {
   components: {
@@ -52,15 +51,9 @@ export default {
     ])
   },
   created() {
-    this.getUserProfile()
+    this.$store.dispatch('user/getUserInfo')
   },
   methods: {
-    // 获取用户信息
-    async getUserProfile() {
-      const res = await getUserProfileAPI()
-      console.log(res)
-    },
-
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
