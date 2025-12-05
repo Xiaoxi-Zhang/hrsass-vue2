@@ -1,15 +1,19 @@
-import { loginApi } from '@/api/user'
+import { loginApi, getUserProfileAPI } from '@/api/user'
 import { getToken, setToken } from '@/utils/auth'
 // import router from '@/router'
 
 const state = {
-  token: getToken() || ''
+  token: getToken() || '',
+  userInfo: {}
 }
 
 const mutations = {
   setToken(state, newToken) {
     state.token = newToken
     setToken(newToken)
+  },
+  setUserInfo(state, newUserInfo) {
+    state.userInfo = newUserInfo
   }
 }
 
@@ -25,6 +29,12 @@ const actions = {
     // }
     store.commit('setToken', res.data)
     return res
+  },
+  async getUserInfo(store) {
+    const res = await getUserProfileAPI()
+    // console.log(res)
+    store.commit('setUserInfo', res.data)
+    console.log('state中的userInfo为：', state.userInfo)
   }
 }
 
