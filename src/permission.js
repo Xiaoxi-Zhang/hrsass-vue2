@@ -5,7 +5,7 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 
 const whiteList = ['/login', '/404']
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   NProgress.start()
   // 从store中获取token
   const token = store.getters.token
@@ -15,6 +15,13 @@ router.beforeEach((to, from, next) => {
       next('/')
       NProgress.done()
     } else {
+      // 如果有用户信息，就不请求最新用户信息
+      const username = store.state.user.userInfo
+      if (Object.keys(username).length === 0) {
+        const res = await store.dispatch('user/getUserInfo')
+        // 获取用户信息 拿到用户的权限 将来做权限的判断使用
+        console.log(res)
+      }
       next()
     }
   } else {
