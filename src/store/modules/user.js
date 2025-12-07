@@ -34,7 +34,8 @@ const actions = {
     const res = await getUserProfileAPI()
     // console.log(res)
     store.commit('setUserInfo', res.data)
-    console.log('state中的userInfo为：', state.userInfo)
+    // console.log('state中的userInfo为：', state.userInfo)
+    return res.data
   }
 }
 
