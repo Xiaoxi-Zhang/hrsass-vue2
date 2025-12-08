@@ -22,6 +22,11 @@ import '@/icons' // icon
 import '@/permission' // permission control
 import request from '@/utils/request'
 
+import * as directives from '@/directive'
+for (const key in directives) {
+  Vue.directive(key, directives[key])
+}
+
 // 目标：this.$request 在Vue的原型对象上（原型对象上的属性和方法可以被实例所访问）
 Vue.prototype.$request = request
 
@@ -30,19 +35,6 @@ Vue.prototype.$request = request
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
-
-Vue.directive('imgError', {
-  // 使用该指令的DOM元素，插入到页面中会执行inserted
-  // el: 使用该指令的DOM元素
-  // binding: 是使用指令时传过来的数据(binding.value)
-  inserted(el, binding) {
-    // console.log(el)
-    // console.log(binding)
-    el.onerror = () => {
-      el.src = binding.value
-    }
-  }
-})
 
 Vue.config.productionTip = false
 
