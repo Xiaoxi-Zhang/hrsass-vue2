@@ -20,7 +20,7 @@ router.beforeEach(async(to, from, next) => {
       if (Object.keys(username).length === 0) {
         const res = await store.dispatch('user/getUserInfo')
         // 获取用户信息 拿到用户的权限 将来做权限的判断使用
-        console.log(res)
+        console.log('权限判断使用：', res)
       }
       next()
     }

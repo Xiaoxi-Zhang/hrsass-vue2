@@ -11,7 +11,10 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img src="@/assets/common/emo.jpg" class="user-avatar">
+          <!-- <img src="@/assets/common/emo.jpg" class="user-avatar"> -->
+          <!-- 事件onerror: 触发时机，当图片加载失败时自动触发这个函数 -->
+          <!-- <img :src="staffPhoto" class="user-avatar" @error="errorEvent"> -->
+          <img v-imgError="defaultImg" :src="staffPhoto" class="user-avatar">
           <span class="name">{{ username }}</span>
           <i class="el-icon-caret-bottom" style="color:#fff" />
         </div>
@@ -44,17 +47,27 @@ export default {
     // Breadcrumb,
     Hamburger
   },
+  data() {
+    return {
+      defaultImg: require('@/assets/common/emo.jpg')
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
       'avatar',
-      'username'
+      'username',
+      'staffPhoto'
     ])
   },
   created() {
-    this.$store.dispatch('user/getUserInfo')
+
   },
   methods: {
+    // errorEvent(e) {
+    //   // console.log('图片加载失败了')
+    //   e.target.src = this.defaultImg
+    // },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },

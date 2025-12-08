@@ -23,3 +23,14 @@ export const getUserProfileAPI = () => {
     method: 'POST'
   })
 }
+
+/**
+ * 获取用户头像
+ * @param {*} id
+ * @returns
+ */
+export const getUserAvatarAPI = (id) => {
+  return request({
+    url: `/sys/user/${id}`
+  })
+}
