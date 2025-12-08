@@ -1,4 +1,4 @@
-import { loginApi, getUserProfileAPI } from '@/api/user'
+import { loginApi, getUserProfileAPI, getUserAvatarAPI } from '@/api/user'
 import { getToken, setToken } from '@/utils/auth'
 // import router from '@/router'
 
@@ -33,9 +33,16 @@ const actions = {
   async getUserInfo(store) {
     const res = await getUserProfileAPI()
     // console.log(res)
-    store.commit('setUserInfo', res.data)
+    const res2 = await getUserAvatarAPI(res.data.userId)
+    // console.log(res2)
+    const result = {
+      ...res.data,
+      ...res2.data
+    }
+    // console.log(result)
+    store.commit('setUserInfo', result)
     // console.log('state中的userInfo为：', state.userInfo)
-    return res.data
+    return result
   }
 }
 
