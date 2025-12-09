@@ -79,7 +79,7 @@ export default {
     return {
       loginForm: {
         mobile: '13800000002',
-        password: '929itheima.CN032@.20251208'
+        password: '929itheima.CN032@.20251209'
       },
       loginRules: {
         mobile: [
