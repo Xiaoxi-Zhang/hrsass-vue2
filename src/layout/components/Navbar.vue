@@ -71,8 +71,11 @@ export default {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
-    async logout() {
-      await this.$store.dispatch('user/logout')
+    logout() {
+      // 清楚token、清楚用户信息、清楚cookies
+      this.$store.commit('user/logOut')
+      // this.$route.fullPath 获取当前路径
+      // /login?redirect=${this.$route.fullPath} 退出的时候，记录下你是在哪个页面退出的
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }
   }
