@@ -1,5 +1,5 @@
 import { loginApi, getUserProfileAPI, getUserAvatarAPI } from '@/api/user'
-import { getToken, setToken } from '@/utils/auth'
+import { getToken, setToken, removeToken } from '@/utils/auth'
 // import router from '@/router'
 
 const state = {
@@ -14,6 +14,11 @@ const mutations = {
   },
   setUserInfo(state, newUserInfo) {
     state.userInfo = newUserInfo
+  },
+  logOut(state) {
+    state.token = ''
+    state.userInfo = {}
+    removeToken()
   }
 }
 

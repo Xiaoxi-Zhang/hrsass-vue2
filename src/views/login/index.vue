@@ -125,7 +125,13 @@ export default {
           await this.$store.dispatch('user/login', this.loginForm)
           // console.log(res)
           // 跳转的时候，拿到响应结果。如果用户名密码正确，再跳转到首页，如果错误提示
-          this.$router.push('/')
+          // 从哪个页面退出的就应该跳转到哪个页面
+          const url = this.$route.query.redirect
+          if (url) {
+            this.$router.push(url)
+          } else {
+            this.$router.push('/')
+          }
         } finally {
           // 不管你前边执行的 try 还是 catch 最后都会执行 finally
           this.loading = false
