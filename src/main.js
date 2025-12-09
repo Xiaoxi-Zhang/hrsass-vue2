@@ -23,9 +23,13 @@ import '@/permission' // permission control
 import request from '@/utils/request'
 
 import * as directives from '@/directive'
-for (const key in directives) {
-  Vue.directive(key, directives[key])
-}
+// for (const key in directives) {
+//   Vue.directive(key, directives[key])
+// }
+// Object.keys(directives) 返回的是数组，所以可以遍历
+Object.keys(directives).forEach((item) => {
+  Vue.directive(item, directives[item])
+})
 
 // 目标：this.$request 在Vue的原型对象上（原型对象上的属性和方法可以被实例所访问）
 Vue.prototype.$request = request
