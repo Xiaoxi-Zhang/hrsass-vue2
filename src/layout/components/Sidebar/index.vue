@@ -31,6 +31,7 @@ export default {
       'sidebar'
     ]),
     routes() {
+      // 获取的是创建路由对象时，传入的路由规则
       return this.$router.options.routes
     },
     activeMenu() {
