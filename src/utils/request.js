@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
+import router from '@/router'
 
 // create an axios instance
 const service = axios.create({
@@ -41,6 +42,11 @@ service.interceptors.response.use(function(response) {
   // 对响应错误做点什么
   // 状态码为非2xx 进行统一提示
   if (error.response) {
+    if (error.response.status === 401 && error.response.data.code === 10002) {
+      // token过期
+      store.commit('user/logOut')
+      router.push('/login')
+    }
     Message.error(error.response.data.message)
   }
   return Promise.reject(error)
