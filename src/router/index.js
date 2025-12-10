@@ -5,6 +5,27 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+// 引入多个模块的规则
+import approvalsRouter from './modules/approvals'
+import departmentsRouter from './modules/departments'
+import employeesRouter from './modules/employees'
+import permissionRouter from './modules/permission'
+import attendancesRouter from './modules/attendances'
+import salarysRouter from './modules/salarys'
+import settingRouter from './modules/setting'
+import socialRouter from './modules/social'
+
+// 动态路由表 => 动态路由(需要权限才可以访问的) 我们这里准备一个数组存放
+export const asyncRoutes = [
+  departmentsRouter,
+  settingRouter,
+  employeesRouter,
+  permissionRouter,
+  approvalsRouter,
+  attendancesRouter,
+  salarysRouter,
+  socialRouter
+]
 
 export const constantRoutes = [
   {
@@ -28,20 +49,7 @@ export const constantRoutes = [
         path: 'dashboard',
         name: 'Dashboard',
         component: () => import('@/views/dashboard/index'),
-        meta: { title: 'Dashboard', icon: 'dashboard' }
-      }
-    ]
-  },
-
-  {
-    path: '/departments',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Departments',
-        component: () => import('@/views/departments/index'),
-        meta: { title: 'Dashboard', icon: 'dashboard' }
+        meta: { title: '首页', icon: 'dashboard' }
       }
     ]
   },
@@ -53,7 +61,7 @@ export const constantRoutes = [
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
+  routes: [...constantRoutes, ...asyncRoutes]
 })
 
 // 通过方法来创建路由对象 封装方法的原因：为了复用

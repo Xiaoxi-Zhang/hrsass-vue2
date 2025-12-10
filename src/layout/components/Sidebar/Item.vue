@@ -13,6 +13,7 @@ export default {
     }
   },
   render(h, context) {
+    // context.props 获取props传过来的数据 render函数内部没有this
     const { icon, title } = context.props
     const vnodes = []
 
