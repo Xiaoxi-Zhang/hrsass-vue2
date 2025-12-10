@@ -1,8 +1,7 @@
 #app {
-
   .main-container {
     min-height: 100%;
-    transition: margin-left .28s;
+    transition: margin-left 0.28s;
     margin-left: $sideBarWidth;
     position: relative;
   }
@@ -26,7 +25,8 @@
 
     // reset element-ui css
     .horizontal-collapse-transition {
-      transition: 0s width ease-in-out, 0s padding-left ease-in-out, 0s padding-right ease-in-out;
+      transition: 0s width ease-in-out, 0s padding-left ease-in-out,
+        0s padding-right ease-in-out;
     }
 
     .scrollbar-wrapper {
@@ -36,6 +36,8 @@
 
     .el-scrollbar__bar.is-vertical {
       right: 0px;
+      // background-color: #43a7fe; // 添加背景色
+      // width: 4px; // 调整宽度使更明显
     }
 
     .el-scrollbar {
@@ -68,33 +70,52 @@
     }
 
     .el-menu {
-  border: none;
-  height: 100%;
-  width: 100% !important;
-  a{
-    li{
-      .svg-icon{
-        color: #fff;
-        font-size: 18px;
-        vertical-align: middle;
-        .icon{
-          color:#fff;
+      border: none;
+      height: 100%;
+      width: 100% !important;
+
+      a {
+        li {
+          .svg-icon {
+            color: #fff;
+            font-size: 18px;
+            vertical-align: middle;
+
+            .icon {
+              color: #fff;
+            }
+          }
+
+          span {
+            color: #fff;
+          }
+
+          &:hover {
+            .svg-icon {
+              color: #43a7fe;
+            }
+
+            span {
+              color: #43a7fe;
+            }
+          }
         }
-      }
-      span{
-        color: #fff;
-      }
-      &:hover{
-        .svg-icon{
-          color: #43a7fe;
-        }
-        span{
-          color: #43a7fe;
+
+        li.is-active {
+          background-color: #fff !important;
+          border-right: 3px solid #43a7fe;
+          box-shadow: 2px 0 8px rgba(67, 167, 254, 0.2);
+
+          .svg-icon {
+            color: #43a7fe;
+          }
+
+          span {
+            color: #43a7fe;
+          }
         }
       }
     }
-  }
-}
 
     // menu hover
     .submenu-title-noDropdown,
@@ -191,7 +212,7 @@
     }
 
     .sidebar-container {
-      transition: transform .28s;
+      transition: transform 0.28s;
       width: $sideBarWidth !important;
     }
 
@@ -219,6 +240,7 @@
     .svg-icon {
       margin-right: 16px;
     }
+
     .sub-el-icon {
       margin-right: 12px;
       margin-left: -2px;
