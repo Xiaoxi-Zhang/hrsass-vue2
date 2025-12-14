@@ -25,7 +25,7 @@
           </el-col>
         </el-row>
         <el-tree :data="departs" :default-expand-all="true">
-          <template #default="{data}">
+          <template #default="{ data }">
             <el-row type="flex" justify="space-between" align="middle" style="height: 40px; width: 100%">
               <el-col :span="20">
                 <span>{{ data.name }}</span>
@@ -36,13 +36,15 @@
                   <el-col :span="12">{{ data.manager }}</el-col>
                   <el-col :span="12">
                     <!-- 下拉菜单 element -->
-                    <el-dropdown>
+                    <el-dropdown @command="handleCommand">
                       <span> 操作<i class="el-icon-arrow-down" /> </span>
                       <!-- 下拉菜单 -->
                       <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item>添加子部门</el-dropdown-item>
-                        <el-dropdown-item>修改部门</el-dropdown-item>
-                        <el-dropdown-item>删除部门</el-dropdown-item>
+                        <el-dropdown-item :command="{ type: 'add' }">添加子部门</el-dropdown-item>
+                        <el-dropdown-item :command="{ type: 'edit' }">修改部门</el-dropdown-item>
+                        <!-- @click.native 绑定事件 -->
+                        <!-- <el-dropdown-item @click.native="del">删除部门</el-dropdown-item> -->
+                        <el-dropdown-item :command="{ type: 'del', id: data.id }">删除部门</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
                   </el-col>
@@ -58,6 +60,7 @@
 
 <script>
 import { getDepartmentListAPI } from '@/api/departments'
+import { transListToTreeData } from '@/utils'
 
 export default {
   name: 'Departments',
@@ -79,25 +82,25 @@ export default {
   },
 
   methods: {
+    handleCommand({ type, id }) {
+      // console.log(command)
+      if (type === 'add') {
+        console.log('点击了添加')
+      }
+      if (type === 'edit') {
+        console.log('点击了编辑')
+      }
+      if (type === 'del') {
+        console.log('点击了删除')
+      }
+    },
     // 获取组织架构列表
     async getDepartmentList() {
       const res = await getDepartmentListAPI()
-      this.departs = this.transListToTreeData(res.data.depts)
+      this.departs = transListToTreeData(res.data.depts, '')
       console.log(this.departs)
       this.company.name = res.data.companyName
       // console.log(res)
-    },
-    transListToTreeData(list) {
-      // console.log(list)
-      // 先找一级
-      const arr = list.filter(item => item.pid === '')
-      console.log(arr)
-      // 找到一级后找二级
-      arr.forEach(item => {
-        const children = list.filter(child => child.pid === item.id)
-        item.children = children
-      })
-      return arr
     }
   }
 }
@@ -111,11 +114,13 @@ export default {
 
 .el-tree {
   ::v-deep {
+
     // 小三角的样式, 去掉默认的小三角的旋转效果
     .el-tree-node__expand-icon.expanded {
       -webkit-transform: rotate(0deg);
       transform: rotate(0deg);
     }
+
     // 有子节点 且未展开 +
     .el-icon-caret-right:before {
       background: url("~@/assets/common/add-circle.png") no-repeat 0 0;
@@ -126,8 +131,9 @@ export default {
       font-size: 16px;
       background-size: 16px;
     }
+
     // 有子节点 且已展开 -
-    .el-tree-node__expand-icon.expanded.el-icon-caret-right:before{
+    .el-tree-node__expand-icon.expanded.el-icon-caret-right:before {
       background: url("~@/assets/common/minus-circle.png") no-repeat 0 0;
       content: '';
       display: block;
@@ -136,8 +142,9 @@ export default {
       font-size: 16px;
       background-size: 16px;
     }
+
     // 没有子节点
-    .el-tree-node__expand-icon.is-leaf::before  {
+    .el-tree-node__expand-icon.is-leaf::before {
       background: url("~@/assets/common/user-filling.png") no-repeat 0 0;
       content: '';
       display: block;

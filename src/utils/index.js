@@ -115,3 +115,32 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+export function transListToTreeData(list, searchVal) {
+  //  思路：先找一级，通过一级找二级
+  // arr 存放的是一个树状结构
+  const arr = []
+  // 1.先找一级
+  list.forEach(item => {
+    if (item.pid === searchVal) {
+      // 满足if条件 说明当前item就是一级
+      const children = transListToTreeData(list, item.id)
+      item.children = children
+      arr.push(item)
+    }
+  })
+  // console.log(arr)
+  return arr
+}
+// transListToTreeData(list) {
+//   // console.log(list)
+//   // 先找一级
+//   const arr = list.filter(item => item.pid === '')
+//   console.log(arr)
+//   // 找到一级后找二级
+//   arr.forEach(item => {
+//     const children = list.filter(child => child.pid === item.id)
+//     item.children = children
+//   })
+//   return arr
+// }
