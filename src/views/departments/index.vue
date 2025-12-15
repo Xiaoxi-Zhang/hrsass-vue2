@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { getDepartmentListAPI } from '@/api/departments'
+import { getDepartmentListAPI, delDepartmentAPI } from '@/api/departments'
 import { transListToTreeData } from '@/utils'
 
 export default {
@@ -91,8 +91,25 @@ export default {
         console.log('点击了编辑')
       }
       if (type === 'del') {
-        console.log('点击了删除')
+        this.delDepartment(id)
       }
+    },
+    // 删除部门
+    delDepartment(id) {
+      console.log(id)
+      this.$confirm('确定要删除此数据吗？', '温馨提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        // 点击了确定
+        const res = await delDepartmentAPI(id)
+        console.log(res)
+        this.$message.success('删除成功')
+        this.getDepartmentList()
+      }).catch(() => {
+        // 点击了取消
+      })
     },
     // 获取组织架构列表
     async getDepartmentList() {

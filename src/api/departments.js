@@ -9,3 +9,15 @@ export const getDepartmentListAPI = () => {
     url: '/company/department'
   })
 }
+
+/**
+ * 删除部门
+ * @param {*} id 部门id
+ * @returns
+ */
+export const delDepartmentAPI = (id) => {
+  return request({
+    url: `/company/department/${id}`,
+    method: 'DELETE'
+  })
+}
