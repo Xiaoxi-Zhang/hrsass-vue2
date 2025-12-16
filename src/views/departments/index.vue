@@ -40,7 +40,7 @@
                       <span> 操作<i class="el-icon-arrow-down" /> </span>
                       <!-- 下拉菜单 -->
                       <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item :command="{ type: 'add' }">添加子部门</el-dropdown-item>
+                        <el-dropdown-item :command="{ type: 'add', data: data }">添加子部门</el-dropdown-item>
                         <el-dropdown-item :command="{ type: 'edit' }">修改部门</el-dropdown-item>
                         <!-- @click.native 绑定事件 -->
                         <!-- <el-dropdown-item @click.native="del">删除部门</el-dropdown-item> -->
@@ -54,6 +54,7 @@
           </template>
         </el-tree>
       </el-card>
+      <addDept :show-dialog="showDialog" :node-data="nodeData" :departs-list="departsList" @closeDialogFn="closeDialog" />
     </div>
   </div>
 </template>
@@ -61,15 +62,22 @@
 <script>
 import { getDepartmentListAPI, delDepartmentAPI } from '@/api/departments'
 import { transListToTreeData } from '@/utils'
+import addDept from './components/add-dept.vue'
 
 export default {
   name: 'Departments',
+  components: { addDept },
   data() {
     return {
       company: {
         name: ''
       },
-      departs: []
+      departs: [],
+      // 放组织架构中处理之前所有的数据
+      departsList: [],
+      showDialog: false,
+      // 表示当前点击这一行的数据
+      nodeData: {}
       // defaultProps: {
       //   children: 'child',
       //   label: 'name'
@@ -82,10 +90,11 @@ export default {
   },
 
   methods: {
-    handleCommand({ type, id }) {
+    handleCommand({ type, id, data }) {
       // console.log(command)
       if (type === 'add') {
-        console.log('点击了添加')
+        // console.log('点击了添加')
+        this.openDialog(data)
       }
       if (type === 'edit') {
         console.log('点击了编辑')
@@ -93,6 +102,16 @@ export default {
       if (type === 'del') {
         this.delDepartment(id)
       }
+    },
+    // 添加部门
+    openDialog(data) {
+      this.showDialog = true
+      // console.log(data)
+      this.nodeData = data
+    },
+    // 关闭弹框
+    closeDialog() {
+      this.showDialog = false
     },
     // 删除部门
     delDepartment(id) {
@@ -114,6 +133,7 @@ export default {
     // 获取组织架构列表
     async getDepartmentList() {
       const res = await getDepartmentListAPI()
+      this.departsList = res.data.depts
       this.departs = transListToTreeData(res.data.depts, '')
       console.log(this.departs)
       this.company.name = res.data.companyName
