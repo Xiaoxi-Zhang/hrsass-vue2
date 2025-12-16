@@ -21,3 +21,13 @@ export const delDepartmentAPI = (id) => {
     method: 'DELETE'
   })
 }
+
+/**
+ * 获取部门负责人列表
+ * @returns
+ */
+export const getDepartmentManagerListAPI = () => {
+  return request({
+    url: '/sys/user/simple'
+  })
+}
