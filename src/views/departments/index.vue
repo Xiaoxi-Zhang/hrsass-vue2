@@ -54,7 +54,13 @@
           </template>
         </el-tree>
       </el-card>
-      <addDept :show-dialog="showDialog" :node-data="nodeData" :departs-list="departsList" @closeDialogFn="closeDialog" />
+      <addDept
+        ref="addDept"
+        :show-dialog="showDialog"
+        :node-data="nodeData"
+        :departs-list="departsList"
+        @closeDialogFn="closeDialog"
+      />
     </div>
   </div>
 </template>
@@ -108,6 +114,9 @@ export default {
       this.showDialog = true
       // console.log(data)
       this.nodeData = data
+      // 调用子组件中的方法
+      console.log(this.$refs.addDept)
+      this.$refs.addDept.getDepartmentManagerList()
     },
     // 关闭弹框
     closeDialog() {

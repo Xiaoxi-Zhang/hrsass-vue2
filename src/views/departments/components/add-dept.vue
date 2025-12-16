@@ -1,22 +1,53 @@
 <template>
   <!-- 放置弹层组件 -->
-  <el-dialog title="新增部门" :visible="showDialog" :close-on-click-modal="false" @close="closeDialog">
+  <!-- @open="getDepartmentManagerList" dialog打开的时候触发回调 -->
+  <el-dialog
+    title="新增部门"
+    :visible="showDialog"
+    :close-on-click-modal="false"
+    @close="closeDialog"
+  >
     <!-- 匿名插槽 -->
     <!-- el-form :model :rules-->
     <!-- el-form-item prop -->
     <!-- el-input v-model -->
     <el-form label-width="120px" :model="form" :rules="rules">
       <el-form-item label="部门名称" prop="name">
-        <el-input v-model="form.name" style="width:80%" placeholder="1-50个字符" />
+        <el-input
+          v-model="form.name"
+          style="width: 80%"
+          placeholder="1-50个字符"
+        />
       </el-form-item>
       <el-form-item label="部门编码" prop="code">
-        <el-input v-model="form.code" style="width:80%" placeholder="1-50个字符" />
+        <el-input
+          v-model="form.code"
+          style="width: 80%"
+          placeholder="1-50个字符"
+        />
       </el-form-item>
       <el-form-item label="部门负责人" prop="manager">
-        <el-select v-model="form.manager" style="width:80%" placeholder="请选择" />
+        <el-select
+          v-model="form.manager"
+          style="width: 80%"
+          placeholder="请选择"
+        >
+          <el-option
+            v-for="item in options"
+            :key="item.id"
+            :label="item.username"
+            :value="item.username"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="部门介绍" prop="introduce">
-        <el-input v-model="form.introduce" style="width:80%" placeholder="1-300个字符" type="textarea" :rows="3" />
+        <el-input
+          v-model="form.introduce"
+          style="width: 80%"
+          placeholder="1-300个字符"
+          type="textarea"
+          :rows="3"
+        />
       </el-form-item>
     </el-form>
     <!-- el-dialog有专门放置底部操作栏的 插槽  具名插槽 -->
@@ -30,6 +61,7 @@
 </template>
 
 <script>
+import { getDepartmentManagerListAPI } from '@/api/departments'
 export default {
   // 需要传入一个props变量来控制 显示或者隐藏
   props: {
@@ -59,12 +91,22 @@ export default {
       rules: {
         name: [
           { required: true, message: '请输入部门名称', trigger: 'blur' },
-          { min: 1, max: 50, message: '部门名称长度在1-50个字符之间', trigger: 'blur' },
+          {
+            min: 1,
+            max: 50,
+            message: '部门名称长度在1-50个字符之间',
+            trigger: 'blur'
+          },
           { validator: this.validateDeptName, trigger: 'blur' }
         ],
         code: [
           { required: true, message: '部门编码不可为空', trigger: 'blur' },
-          { min: 1, max: 50, message: '部门编码长度在1-50个字符之间', trigger: 'blur' },
+          {
+            min: 1,
+            max: 50,
+            message: '部门编码长度在1-50个字符之间',
+            trigger: 'blur'
+          },
           { validator: this.vaildateDeptCode, trigger: 'blur' }
         ],
         manager: [
@@ -72,12 +114,28 @@ export default {
         ],
         introduce: [
           { required: true, message: '部门介绍不可为空', trigger: 'blur' },
-          { min: 1, max: 300, message: '部门介绍长度在1-300个字符之间', trigger: 'blur' }
+          {
+            min: 1,
+            max: 300,
+            message: '部门介绍长度在1-300个字符之间',
+            trigger: 'blur'
+          }
         ]
-      }
+      },
+      managerList: []
     }
   },
+  created() {
+    // 在created中调用，弹框还没打开就调用了这个接口（visible的原因 display:none|block）
+    // this.getDepartmentManagerList()
+  },
   methods: {
+    // 获取部门负责人
+    async getDepartmentManagerList() {
+      const res = await getDepartmentManagerListAPI()
+      // console.log(res)
+      this.managerList = res.data
+    },
     vaildateDeptCode(rule, value, callback) {
       const flag = this.departsList.some(item => item.code === value)
       flag ? callback('部门编码不可重复') : callback()
