@@ -31,3 +31,27 @@ export const getDepartmentManagerListAPI = () => {
     url: '/sys/user/simple'
   })
 }
+
+/**
+ * 添加部门列表
+ * @param {*} data 参数
+ * @returns
+ */
+export const addDepartmentAPI = (data) => {
+  return request({
+    url: '/company/department',
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 获取部门详情
+ * @param {*} id 部门id
+ * @returns
+ */
+export const getDepartmentDetailAPI = (id) => {
+  return request({
+    url: `/company/department/${id}`
+  })
+}
