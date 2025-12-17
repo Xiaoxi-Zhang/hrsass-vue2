@@ -11,7 +11,7 @@
     <!-- el-form :model :rules-->
     <!-- el-form-item prop -->
     <!-- el-input v-model -->
-    <el-form label-width="120px" :model="form" :rules="rules">
+    <el-form ref="form" label-width="120px" :model="form" :rules="rules">
       <el-form-item label="部门名称" prop="name">
         <el-input
           v-model="form.name"
@@ -33,7 +33,7 @@
           placeholder="请选择"
         >
           <el-option
-            v-for="item in options"
+            v-for="item in managerList"
             :key="item.id"
             :label="item.username"
             :value="item.username"
@@ -53,7 +53,7 @@
     <!-- el-dialog有专门放置底部操作栏的 插槽  具名插槽 -->
     <template #footer>
       <div>
-        <el-button type="primary" size="small">确定</el-button>
+        <el-button type="primary" size="small" @click="confirmAdd">确定</el-button>
         <el-button size="small" @click="closeDialog">取消</el-button>
       </div>
     </template>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { getDepartmentManagerListAPI } from '@/api/departments'
+import { getDepartmentManagerListAPI, addDepartmentAPI, getDepartmentDetailAPI } from '@/api/departments'
 export default {
   // 需要传入一个props变量来控制 显示或者隐藏
   props: {
@@ -130,12 +130,30 @@ export default {
     // this.getDepartmentManagerList()
   },
   methods: {
+    // 获取部门详情
+    async getDepartmentDetail(id) {
+      const res = await getDepartmentDetailAPI(id)
+      // console.log(res)
+      this.form = res.data
+    },
+    // 确认新增
+    confirmAdd() {
+      this.$refs.form.validate(async flag => {
+        if (!flag) return
+        this.form.pid = this.nodeData.id
+        await addDepartmentAPI(this.form)
+        this.closeDialog()
+        this.$message.success('新增部门成功')
+        this.$emit('addSuccess')
+      })
+    },
     // 获取部门负责人
     async getDepartmentManagerList() {
       const res = await getDepartmentManagerListAPI()
       // console.log(res)
       this.managerList = res.data
     },
+    // 部门编码校验
     vaildateDeptCode(rule, value, callback) {
       const flag = this.departsList.some(item => item.code === value)
       flag ? callback('部门编码不可重复') : callback()
@@ -147,14 +165,18 @@ export default {
       // value  可以拿到输入框中输入的内容
       // console.log(value)
       // 拿到点击这一行 对应的子级
-      const children = this.nodeData.children
+      // // 确保 nodeData 和 children 存在,只有当 children 存在且为数组时才进行校验
+      const children = this.nodeData.children || []
       // 只要有一个部门中的name和value一样 就校验不通过
       const flag = children.some(item => item.name === value)
       flag ? callback('部门名称不可重复') : callback()
     },
+    // 关闭弹框
     closeDialog() {
       // console.log('点击了关闭')
-      this.$emit('closeDialogFn')
+      // this.$emit('closeDialogFn')
+      this.$emit('update:showDialog', false)
+      this.$refs.form.resetFields()
     }
   }
 }

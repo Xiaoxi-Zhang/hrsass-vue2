@@ -17,7 +17,7 @@
                   <span> 操作<i class="el-icon-arrow-down" /> </span>
                   <!-- 下拉菜单 -->
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item>添加子部门</el-dropdown-item>
+                    <el-dropdown-item @click.native="addGradeOneDept">添加子部门</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-col>
@@ -41,7 +41,7 @@
                       <!-- 下拉菜单 -->
                       <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item :command="{ type: 'add', data: data }">添加子部门</el-dropdown-item>
-                        <el-dropdown-item :command="{ type: 'edit' }">修改部门</el-dropdown-item>
+                        <el-dropdown-item :command="{ type: 'edit', id: data.id }">修改部门</el-dropdown-item>
                         <!-- @click.native 绑定事件 -->
                         <!-- <el-dropdown-item @click.native="del">删除部门</el-dropdown-item> -->
                         <el-dropdown-item :command="{ type: 'del', id: data.id }">删除部门</el-dropdown-item>
@@ -54,12 +54,13 @@
           </template>
         </el-tree>
       </el-card>
+      <!-- @closeDialogFn="closeDialog" -->
       <addDept
         ref="addDept"
-        :show-dialog="showDialog"
+        :show-dialog.sync="showDialog"
         :node-data="nodeData"
         :departs-list="departsList"
-        @closeDialogFn="closeDialog"
+        @addSuccess="getDepartmentList"
       />
     </div>
   </div>
@@ -96,6 +97,12 @@ export default {
   },
 
   methods: {
+    // 添加一级部门
+    addGradeOneDept() {
+      this.showDialog = true
+      this.nodeData = this.company
+      this.$refs.addDept.getDepartmentManagerList()
+    },
     handleCommand({ type, id, data }) {
       // console.log(command)
       if (type === 'add') {
@@ -103,11 +110,17 @@ export default {
         this.openDialog(data)
       }
       if (type === 'edit') {
-        console.log('点击了编辑')
+        // console.log('点击了编辑')
+        this.editDepartment(id)
       }
       if (type === 'del') {
         this.delDepartment(id)
       }
+    },
+    // 修改部门
+    editDepartment(id) {
+      this.showDialog = true
+      this.$refs.addDept.getDepartmentDetail(id)
     },
     // 添加部门
     openDialog(data) {
@@ -146,6 +159,8 @@ export default {
       this.departs = transListToTreeData(res.data.depts, '')
       console.log(this.departs)
       this.company.name = res.data.companyName
+      this.company.children = this.departs
+      this.company.id = ''
       // console.log(res)
     }
   }
