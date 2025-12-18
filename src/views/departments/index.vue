@@ -120,6 +120,7 @@ export default {
     // 修改部门
     editDepartment(id) {
       this.showDialog = true
+      // this.$refs.addDept.title = '修改部门'
       this.$refs.addDept.getDepartmentDetail(id)
     },
     // 添加部门
@@ -128,7 +129,8 @@ export default {
       // console.log(data)
       this.nodeData = data
       // 调用子组件中的方法
-      console.log(this.$refs.addDept)
+      // console.log(this.$refs.addDept)
+      // this.$refs.addDept.title = '新增部门'
       this.$refs.addDept.getDepartmentManagerList()
     },
     // 关闭弹框

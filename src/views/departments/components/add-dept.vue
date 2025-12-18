@@ -2,7 +2,7 @@
   <!-- 放置弹层组件 -->
   <!-- @open="getDepartmentManagerList" dialog打开的时候触发回调 -->
   <el-dialog
-    title="新增部门"
+    :title="title"
     :visible="showDialog"
     :close-on-click-modal="false"
     @close="closeDialog"
@@ -62,6 +62,7 @@
 
 <script>
 import { getDepartmentManagerListAPI, addDepartmentAPI, getDepartmentDetailAPI } from '@/api/departments'
+
 export default {
   // 需要传入一个props变量来控制 显示或者隐藏
   props: {
@@ -123,6 +124,16 @@ export default {
         ]
       },
       managerList: []
+      // title: ''
+    }
+  },
+  computed: {
+    title() {
+      if (this.form.id) {
+        return '修改部门'
+      } else {
+        return '新增部门'
+      }
     }
   },
   created() {
