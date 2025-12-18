@@ -187,6 +187,14 @@ export default {
       // console.log('点击了关闭')
       // this.$emit('closeDialogFn')
       this.$emit('update:showDialog', false)
+      // resetFields 只能清空绑定了prop的表单中的数据和校验
+      this.form = {
+        code: '',
+        introduce: '',
+        manager: '',
+        name: '',
+        pid: ''
+      }
       this.$refs.form.resetFields()
     }
   }
