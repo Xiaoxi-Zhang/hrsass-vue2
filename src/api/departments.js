@@ -55,3 +55,16 @@ export const getDepartmentDetailAPI = (id) => {
     url: `/company/department/${id}`
   })
 }
+
+/**
+ * 修改部门
+ * @param {*} data 参数
+ * @returns
+ */
+export const editDepartmentAPI = (data) => {
+  return request({
+    url: `/company/department/${data.id}`,
+    method: 'PUT',
+    data
+  })
+}

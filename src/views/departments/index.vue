@@ -1,7 +1,7 @@
 <template>
   <div class="departments-container">
     <div class="app-container">
-      <el-card class="tree-card">
+      <el-card v-loading="isLoading" class="tree-card">
         <!-- 用了一个行列布局 -->
         <el-row type="flex" justify="space-between" align="middle" style="height: 40px">
           <el-col :span="20">
@@ -84,7 +84,8 @@ export default {
       departsList: [],
       showDialog: false,
       // 表示当前点击这一行的数据
-      nodeData: {}
+      nodeData: {},
+      isLoading: true
       // defaultProps: {
       //   children: 'child',
       //   label: 'name'
@@ -122,6 +123,7 @@ export default {
       this.showDialog = true
       // this.$refs.addDept.title = '修改部门'
       this.$refs.addDept.getDepartmentDetail(id)
+      this.$refs.addDept.getDepartmentManagerList()
     },
     // 添加部门
     openDialog(data) {
@@ -156,6 +158,7 @@ export default {
     },
     // 获取组织架构列表
     async getDepartmentList() {
+      this.isLoading = true
       const res = await getDepartmentListAPI()
       this.departsList = res.data.depts
       this.departs = transListToTreeData(res.data.depts, '')
@@ -163,6 +166,7 @@ export default {
       this.company.name = res.data.companyName
       this.company.children = this.departs
       this.company.id = ''
+      this.isLoading = false
       // console.log(res)
     }
   }

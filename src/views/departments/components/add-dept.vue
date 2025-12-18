@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { getDepartmentManagerListAPI, addDepartmentAPI, getDepartmentDetailAPI } from '@/api/departments'
+import { getDepartmentManagerListAPI, addDepartmentAPI, getDepartmentDetailAPI, editDepartmentAPI } from '@/api/departments'
 
 export default {
   // 需要传入一个props变量来控制 显示或者隐藏
@@ -89,6 +89,7 @@ export default {
         name: '',
         pid: ''
       },
+      originForm: {},
       rules: {
         name: [
           { required: true, message: '请输入部门名称', trigger: 'blur' },
@@ -146,15 +147,23 @@ export default {
       const res = await getDepartmentDetailAPI(id)
       // console.log(res)
       this.form = res.data
+      this.originForm = { ...res.data }
     },
     // 确认新增
     confirmAdd() {
       this.$refs.form.validate(async flag => {
         if (!flag) return
-        this.form.pid = this.nodeData.id
-        await addDepartmentAPI(this.form)
+        if (this.form.id) {
+          // 修改状态
+          await editDepartmentAPI(this.form)
+          this.$message.success('修改部门成功')
+        } else {
+          // 新增状态
+          this.form.pid = this.nodeData.id
+          await addDepartmentAPI(this.form)
+          this.$message.success('新增部门成功')
+        }
         this.closeDialog()
-        this.$message.success('新增部门成功')
         this.$emit('addSuccess')
       })
     },
@@ -166,6 +175,13 @@ export default {
     },
     // 部门编码校验
     vaildateDeptCode(rule, value, callback) {
+      if (this.form.id && value === this.originForm.code) {
+        // 修改状态
+        // 你输入的值value
+        // 原来的值
+        callback()
+        return
+      }
       const flag = this.departsList.some(item => item.code === value)
       flag ? callback('部门编码不可重复') : callback()
     },
@@ -176,11 +192,27 @@ export default {
       // value  可以拿到输入框中输入的内容
       // console.log(value)
       // 拿到点击这一行 对应的子级
-      // // 确保 nodeData 和 children 存在,只有当 children 存在且为数组时才进行校验
-      const children = this.nodeData.children || []
-      // 只要有一个部门中的name和value一样 就校验不通过
-      const flag = children.some(item => item.name === value)
-      flag ? callback('部门名称不可重复') : callback()
+      if (this.form.id) {
+        // 修改
+        // 当前你输入的内容和你的兄弟部门 名字不能重复
+        // 当前输入的内容 value
+        // 判断原来的值和当前输入的值是否一样，如果一样也得放行
+        if (value === this.originForm.name) {
+          callback()
+          return
+        } else {
+          const arr = this.departsList.filter(item => item.pid === this.form.pid)
+          // console.log(arr)
+          const flag = arr.some(item => item.name === value)
+          flag ? callback('部门名称不可重复') : callback()
+        }
+      } else {
+        // // 确保 nodeData 和 children 存在,只有当 children 存在且为数组时才进行校验
+        const children = this.nodeData.children || []
+        // 只要有一个部门中的name和value一样 就校验不通过
+        const flag = children.some(item => item.name === value)
+        flag ? callback('部门名称不可重复') : callback()
+      }
     },
     // 关闭弹框
     closeDialog() {
