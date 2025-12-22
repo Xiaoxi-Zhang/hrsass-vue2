@@ -12,3 +12,15 @@ export const getRoleListAPI = (page, pagesize) => {
     params: { page, pagesize }
   })
 }
+
+/**
+ * 删除角色
+ * @param {*} id 角色id
+ * @returns
+ */
+export const delRoleAPI = (id) => {
+  return request({
+    url: `/sys/role/${id}`,
+    method: 'DELETE'
+  })
+}
