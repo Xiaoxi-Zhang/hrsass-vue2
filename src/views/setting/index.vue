@@ -6,7 +6,7 @@
           <!-- 左侧 -->
           <el-tab-pane label="角色管理">
             <!-- 按钮 -->
-            <el-button icon="el-icon-plus" size="small" type="primary">新增角色</el-button>
+            <el-button icon="el-icon-plus" size="small" type="primary" @click="openDialog">新增角色</el-button>
             <!-- 表格 -->
             <el-table v-loading="isLoading" :data="list">
               <el-table-column label="序号" width="100" type="index" :index="indexMethod" />
@@ -41,12 +41,27 @@
           </el-tab-pane>
         </el-tabs>
       </el-card>
+      <el-dialog title="新增角色" :visible="showDialog" :close-on-click-modal="false" @close="closeDialog">
+        <el-form ref="roleForm" :model="form" :rules="rules" label-width="100px">
+          <el-form-item label="角色名称" prop="name">
+            <el-input v-model="form.name" placeholder="请输入角色名称" />
+          </el-form-item>
+          <el-form-item label="角色描述" prop="description">
+            <el-input v-model="form.description" placeholder="请输入角色描述" />
+          </el-form-item>
+        </el-form>
+
+        <template #footer>
+          <el-button @click="closeDialog">取消</el-button>
+          <el-button type="primary" @click="confirmAddRole">确认</el-button>
+        </template>
+      </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
-import { getRoleListAPI, delRoleAPI } from '@/api/setting'
+import { getRoleListAPI, delRoleAPI, addRoleAPI } from '@/api/setting'
 
 export default {
   name: 'Setting',
@@ -56,13 +71,47 @@ export default {
       pagesize: 2,
       list: [],
       total: 0,
-      isLoading: false
+      isLoading: false,
+      showDialog: false,
+      form: {
+        name: '',
+        description: ''
+      },
+      rules: {
+        name: [
+          { required: true, message: '请输入角色名称', trigger: 'blur' }
+        ],
+        description: [
+          { required: true, message: '请输入角色描述', trigger: 'blur' }
+        ]
+      }
     }
   },
   created() {
     this.getRoleList()
   },
   methods: {
+    // 新增角色
+    confirmAddRole() {
+      this.$refs.roleForm.validate(async flag => {
+        if (!flag) return
+        await addRoleAPI(this.form)
+        this.$message.success('新增角色成功!')
+        this.closeDialog()
+        this.getRoleList()
+      })
+    },
+    openDialog() {
+      this.showDialog = true
+    },
+    closeDialog() {
+      this.showDialog = false
+      this.$refs.roleForm.resetFields()
+      this.form = {
+        name: '',
+        description: ''
+      }
+    },
     delRole(id) {
       // console.log(id)
       this.$confirm('确定要删除此数据吗？', '温馨提示', {
