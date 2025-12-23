@@ -15,7 +15,7 @@
               <el-table-column label="操作">
                 <template #default="{ row }">
                   <el-button size="small" type="success">分配权限</el-button>
-                  <el-button size="small" type="primary">编辑</el-button>
+                  <el-button size="small" type="primary" @click="editRole(row.id)">编辑</el-button>
                   <el-button size="small" type="danger" @click="delRole(row.id)">删除</el-button>
                 </template>
               </el-table-column>
@@ -37,11 +37,32 @@
           </el-tab-pane>
 
           <el-tab-pane label="公司信息">
-            <!-- 公司信息 -->
+            <!-- 警告信息 -->
+            <el-alert
+              title="对公司名称、公司地址、营业执照、公司地区的更新，将使得公司资料被重新审核，请谨慎修改"
+              type="info"
+              show-icon
+              :closable="false"
+            />
+            <!-- 表单 -->
+            <el-form label-width="120px" style="margin-top:50px">
+              <el-form-item label="公司名称">
+                <el-input v-model="companyInfo.name" disabled style="width:400px" />
+              </el-form-item>
+              <el-form-item label="公司地址">
+                <el-input v-model="companyInfo.companyAddress" disabled style="width:400px" />
+              </el-form-item>
+              <el-form-item label="邮箱">
+                <el-input v-model="companyInfo.mailbox" disabled style="width:400px" />
+              </el-form-item>
+              <el-form-item label="备注">
+                <el-input v-model="companyInfo.remarks" type="textarea" :rows="3" disabled style="width:400px" />
+              </el-form-item>
+            </el-form>
           </el-tab-pane>
         </el-tabs>
       </el-card>
-      <el-dialog title="新增角色" :visible="showDialog" :close-on-click-modal="false" @close="closeDialog">
+      <el-dialog :title="title" :visible="showDialog" :close-on-click-modal="false" @close="closeDialog">
         <el-form ref="roleForm" :model="form" :rules="rules" label-width="100px">
           <el-form-item label="角色名称" prop="name">
             <el-input v-model="form.name" placeholder="请输入角色名称" />
@@ -61,7 +82,8 @@
 </template>
 
 <script>
-import { getRoleListAPI, delRoleAPI, addRoleAPI } from '@/api/setting'
+import { getRoleListAPI, delRoleAPI, addRoleAPI, getRoleDetailAPI, editRoleAPI } from '@/api/setting'
+import { getCompanyAPI } from '@/api/company'
 
 export default {
   name: 'Setting',
@@ -84,19 +106,50 @@ export default {
         description: [
           { required: true, message: '请输入角色描述', trigger: 'blur' }
         ]
+      },
+      companyInfo: {}
+    }
+  },
+  computed: {
+    title() {
+      if (this.form.id) {
+        return '修改角色'
+      } else {
+        return '新增角色'
       }
     }
   },
   created() {
     this.getRoleList()
+    this.getCompany()
   },
   methods: {
+    async getCompany() {
+      const companyId = this.$store.state.user.userInfo.companyId
+      const res = await getCompanyAPI(companyId)
+      // console.log(res)
+      this.companyInfo = res.data
+    },
+    // 编辑角色
+    async editRole(id) {
+      this.openDialog()
+      const res = await getRoleDetailAPI(id)
+      // console.log(res)
+      this.form = res.data
+    },
     // 新增角色
     confirmAddRole() {
       this.$refs.roleForm.validate(async flag => {
         if (!flag) return
-        await addRoleAPI(this.form)
-        this.$message.success('新增角色成功!')
+        if (this.form.id) {
+          // 编辑状态
+          await editRoleAPI(this.form)
+          this.$message.success('修改角色成功')
+        } else {
+          // 新增状态
+          await addRoleAPI(this.form)
+          this.$message.success('新增角色成功!')
+        }
         this.closeDialog()
         this.getRoleList()
       })

@@ -37,3 +37,27 @@ export const addRoleAPI = (data) => {
     data
   })
 }
+
+/**
+ * 获取角色详情
+ * @param {*} id 角色id
+ * @returns
+ */
+export const getRoleDetailAPI = (id) => {
+  return request({
+    url: `/sys/role/${id}`
+  })
+}
+
+/**
+ * 编辑角色
+ * @param {*} data 参数
+ * @returns
+ */
+export const editRoleAPI = (data) => {
+  return request({
+    url: `/sys/role/${data.id}`,
+    method: 'PUT',
+    data
+  })
+}
