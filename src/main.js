@@ -21,6 +21,7 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 import request from '@/utils/request'
+import PageTools from '@/components/PageTools'
 
 import * as directives from '@/directive'
 // for (const key in directives) {
@@ -33,6 +34,8 @@ Object.keys(directives).forEach((item) => {
 
 // 目标：this.$request 在Vue的原型对象上（原型对象上的属性和方法可以被实例所访问）
 Vue.prototype.$request = request
+
+Vue.component('PageTools', PageTools)
 
 // 注册element-ui中的全局组件
 // set ElementUI lang to EN
