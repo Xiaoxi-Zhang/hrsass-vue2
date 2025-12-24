@@ -3,15 +3,16 @@
     <div class="page-tools">
       <!-- 左侧 -->
       <div class="left">
-        <div class="tips">
+        <div v-if="$slots.left" class="tips">
           <i class="el-icon-info" />
-          <span>本月: 社保在缴 公积金在缴</span>
+          <span>
+            <slot name="left" />
+          </span>
         </div>
       </div>
       <div class="right">
         <!-- 右侧 -->
-        <el-button type="primary" size="small">历史归档</el-button>
-        <el-button type="primary" size="small">导出</el-button>
+        <slot name="right" />
       </div>
     </div>
   </el-card>
@@ -19,6 +20,9 @@
 
 <script>
 export default {
+  created() {
+    console.log(this.$slots)
+  }
 
 }
 </script>
@@ -28,12 +32,14 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   .tips {
     line-height: 34px;
     padding: 0px 15px;
     border-radius: 5px;
     border: 1px solid rgba(145, 213, 255, 1);
     background: rgba(230, 247, 255, 1);
+
     i {
       margin-right: 10px;
       color: #409eff;
