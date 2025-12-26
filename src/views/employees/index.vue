@@ -8,7 +8,7 @@
         <template #right>
           <el-button type="warning" size="small">excel导入</el-button>
           <el-button type="danger" size="small">excel导出</el-button>
-          <el-button type="primary" size="small">新增员工</el-button>
+          <el-button type="primary" size="small" @click="openAddDialog">新增员工</el-button>
         </template>
       </page-tools>
       <el-card v-loading="isLoading" style="margin-top: 10px">
@@ -44,6 +44,7 @@
           />
         </div>
       </el-card>
+      <addEmployee :show-dialog="showDialog" />
     </div>
   </div>
 </template>
@@ -52,22 +53,32 @@
 import { getEmployeeListAPI, delEmployeeAPI } from '@/api/employees'
 import EnumObj from '@/constant/employees'
 import dayjs from 'dayjs'
+import addEmployee from './components/add-employee.vue'
+import components from '@/components'
 
 export default {
   name: 'Employees',
+  components: {
+    addEmployee
+  },
   data() {
     return {
       page: 1,
       size: 10,
       total: 0,
       list: [],
-      isLoading: false
+      isLoading: false,
+      showDialog: false
     }
   },
   created() {
     this.getEmployeeList()
   },
   methods: {
+    openAddDialog() {
+      this.showDialog = true
+    },
+    // 删除员工
     del(id) {
       // console.log(id)
       this.$confirm('确定要删除此数据吗？', '温馨提示', {
