@@ -19,12 +19,16 @@
           <el-table-column label="工号" prop="workNumber" />
           <el-table-column label="聘用形式" prop="formOfEmployment" :formatter="formateText" />
           <el-table-column label="部门" prop="departmentName" />
-          <el-table-column label="入职时间" prop="timeOfEntry" />
+          <el-table-column label="入职时间">
+            <template #default="{row}">
+              {{ formateTime(row.timeOfEntry) }}
+            </template>
+          </el-table-column>
           <el-table-column label="操作" fixed="right" width="280">
-            <template>
+            <template #default="{row}">
               <el-button type="text" size="small">查看</el-button>
               <el-button type="text" size="small">分配角色</el-button>
-              <el-button type="text" size="small">删除</el-button>
+              <el-button type="text" size="small" @click="del(row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -45,8 +49,9 @@
 </template>
 
 <script>
-import { getEmployeeListAPI } from '@/api/employees'
+import { getEmployeeListAPI, delEmployeeAPI } from '@/api/employees'
 import EnumObj from '@/constant/employees'
+import dayjs from 'dayjs'
 
 export default {
   name: 'Employees',
@@ -63,6 +68,22 @@ export default {
     this.getEmployeeList()
   },
   methods: {
+    del(id) {
+      // console.log(id)
+      this.$confirm('确定要删除此数据吗？', '温馨提示', {
+        closeOnClickModal: false
+      }).then(async() => {
+        await delEmployeeAPI(id)
+        this.$message.success('删除成功')
+        if (this.list.length === 1 && this.page > 1) {
+          this.page--
+        }
+        this.getEmployeeList()
+      }).catch(() => {})
+    },
+    formateTime(time) {
+      return time ? dayjs(time).format('YYYY-MM-DD') : ''
+    },
     formateText(row, column, cellValue, index) {
       // console.log(row, column, cellValue, index)
       const formOfEmployment = +cellValue
