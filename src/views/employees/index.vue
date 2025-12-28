@@ -44,7 +44,7 @@
           />
         </div>
       </el-card>
-      <addEmployee :show-dialog="showDialog" />
+      <addEmployee :show-dialog.sync="showDialog" />
     </div>
   </div>
 </template>
