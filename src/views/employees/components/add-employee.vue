@@ -1,7 +1,7 @@
 <template>
   <el-dialog title="新增员工" :visible="showDialog" top="8vh" @close="closeDialog" @click.native="hideTreeDialog">
     <!-- 表单 -->
-    <el-form label-width="120px" :model="formData" :rules="rules">
+    <el-form ref="form" label-width="120px" :model="formData" :rules="rules">
       <el-form-item label="姓名" prop="username">
         <el-input v-model="formData.username" style="width:50%" placeholder="请输入姓名" />
       </el-form-item>
@@ -12,25 +12,23 @@
         <el-date-picker v-model="formData.timeOfEntry" style="width:50%" placeholder="请选择入职时间" />
       </el-form-item>
       <el-form-item label="聘用形式" prop="formOfEmployment">
-        <el-select v-model="formData.formOfEmployment" style="width:50%" placeholder="请选择" />
+        <el-select v-model="formData.formOfEmployment" style="width:50%" placeholder="请选择">
+          <el-option v-for="item in hireType" :key="item.id" :label="item.value" :value="item.id" />
+        </el-select>
       </el-form-item>
       <el-form-item label="工号" prop="workNumber">
         <el-input v-model="formData.workNumber" style="width:50%" placeholder="请输入工号" />
       </el-form-item>
       <el-form-item label="部门" prop="departmentName">
         <el-input
-          v-model="formData.departmentName"
+          :value="formData.departmentName"
           style="width:50%"
           placeholder="请选择部门"
           @click.native.stop="getDepartmentList"
         />
-        <el-tree
-          v-show="showTree"
-          v-loading="isLoading"
-          :data="list"
-          :props="defaultProps"
-          @node-click="handleNodeClick"
-        />
+        <div v-show="showTree" class="tree-box">
+          <el-tree v-loading="isLoading" :data="list" :props="defaultProps" @node-click="handleNodeClick" />
+        </div>
       </el-form-item>
       <el-form-item label="转正时间" prop="correctionTime">
         <el-date-picker v-model="formData.correctionTime" style="width:50%" placeholder="请选择转正时间" />
@@ -39,7 +37,7 @@
     <!-- footer插槽 -->
     <template v-slot:footer>
       <el-button @click="closeDialog">取消</el-button>
-      <el-button type="primary">确定</el-button>
+      <el-button type="primary" @click="confirmAddEmp">确定</el-button>
     </template>
   </el-dialog>
 </template>
@@ -47,6 +45,8 @@
 <script>
 import { getDepartmentListAPI } from '@/api/departments'
 import { transListToTreeData } from '@/utils'
+import EnumObj from '@/constant/employees'
+import { addEmployeeAPI } from '@/api/employees'
 
 export default {
   props: {
@@ -93,10 +93,22 @@ export default {
         label: 'name'
       },
       showTree: false, // 控制el-tree组件的显示与隐藏
-      isLoading: false
+      isLoading: false,
+      hireType: EnumObj.hireType
     }
   },
   methods: {
+    // 确定添加员工
+    confirmAddEmp() {
+      this.$refs.form.validate(async flag => {
+        if (!flag) return
+        await addEmployeeAPI(this.formData)
+        this.$message.success('添加员工成功')
+        this.closeDialog()
+        this.$parent.getDepartmentList()
+      })
+    },
+    // 点击部门名称，获取部门列表
     handleNodeClick(data) {
       // console.log(data)
       if (data.children.length > 0) {
@@ -124,12 +136,36 @@ export default {
     },
     // 关闭弹框
     closeDialog() {
+      this.$refs.form.resetFields()
+      this.formData.correctionTime = ''
       //  注意：update和showDialog之间不能有空格，否则无法修改父组件的数据
       this.$emit('update:showDialog', false)
-      console.log('点击了关闭弹窗')
+      // console.log('点击了关闭弹窗')
     }
   }
 }
 </script>
 
-<style></style>
+<style scoped lang="scss">
+.tree-box {
+  position: absolute;
+  width: 50%;
+  min-height: 50px;
+  left: 0;
+  top: 45px;
+  z-index: 100;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding-right: 5px;
+  overflow: hidden;
+  background-color: #fff;
+  max-height: 200px;
+  overflow: auto;
+
+  ::v-deep {
+    .el-tree-node__content {
+      height: auto;
+    }
+  }
+}
+</style>

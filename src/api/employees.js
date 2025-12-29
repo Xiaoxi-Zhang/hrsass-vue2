@@ -24,3 +24,16 @@ export const delEmployeeAPI = (id) => {
     method: 'DELETE'
   })
 }
+
+/**
+ * 添加员工
+ * @param {*} data 参数
+ * @returns
+ */
+export const addEmployeeAPI = (data) => {
+  return request({
+    url: '/sys/user',
+    method: 'POST',
+    data
+  })
+}

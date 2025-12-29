@@ -9,6 +9,14 @@ export default {
     {
       id: 2,
       value: '非正式'
+    },
+    {
+      id: 3,
+      value: '外包'
+    },
+    {
+      id: 2,
+      value: '实习生'
     }
   ],
   // 管理形式
