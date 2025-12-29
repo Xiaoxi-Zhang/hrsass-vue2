@@ -54,7 +54,6 @@ import { getEmployeeListAPI, delEmployeeAPI } from '@/api/employees'
 import EnumObj from '@/constant/employees'
 import dayjs from 'dayjs'
 import addEmployee from './components/add-employee.vue'
-import components from '@/components'
 
 export default {
   name: 'Employees',
