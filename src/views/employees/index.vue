@@ -7,7 +7,7 @@
         </template>
         <template #right>
           <el-button type="warning" size="small" @click="$router.push('/import/index?type=employee')">excel导入</el-button>
-          <el-button type="danger" size="small">excel导出</el-button>
+          <el-button type="danger" size="small" @click="handleDownload">excel导出</el-button>
           <el-button type="primary" size="small" @click="openAddDialog">新增员工</el-button>
         </template>
       </page-tools>
@@ -74,6 +74,29 @@ export default {
     this.getEmployeeList()
   },
   methods: {
+    // 下载excel文件
+    handleDownload() {
+      import('@/vendor/Export2Excel').then(async excel => {
+        const { data: { rows }} = await getEmployeeListAPI(1, this.total)
+        console.log(rows)
+
+        // excel.export_json_to_excel({
+        //   // 表头
+        //   header: ['姓名', '性别', '年龄'],
+        //   // data是要导出的数据，并且是一个二维数组
+        //   data: [
+        //     ['张三', '男', 18],
+        //     ['李四', '女', 19],
+        //     ['王五', '男', 48]
+        //   ],
+        //   // 文件名
+        //   filename: '员工信息',
+        //   // 宽度是否自适应
+        //   autoWidth: true,
+        //   bookType: 'xlsx'
+        // })
+      })
+    },
     openAddDialog() {
       this.showDialog = true
     },
