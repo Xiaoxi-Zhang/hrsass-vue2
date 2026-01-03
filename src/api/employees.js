@@ -37,3 +37,16 @@ export const addEmployeeAPI = (data) => {
     data
   })
 }
+
+/**
+ * 批量添加员工
+ * @param {*} list 批量添加的员工列表
+ * @returns
+ */
+export const batchAddEmployeeAPI = (list) => {
+  return request({
+    url: '/sys/user/batch',
+    method: 'POST',
+    data: list
+  })
+}
