@@ -1,14 +1,19 @@
 <template>
-  <div>
-    <input ref="excel-upload-input" class="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleClick">
-    <!-- dragenter：拖拽文件 进入拖拽区域后执行 -->
-    <!-- dragover：拖拽文件进入拖拽区域后 不松手时执行 -->
-    <!-- drop：松开拖拽文件时执行 -->
-    <div class="drop" @drop="handleDrop" @dragover="handleDragover" @dragenter="handleDragover">
-      Drop excel file here or
-      <el-button :loading="loading" style="margin-left:16px;" size="mini" type="primary" @click="handleUpload">
-        Browse
+  <!-- dragenter：拖拽文件 进入拖拽区域后执行 -->
+  <!-- dragover：拖拽文件进入拖拽区域后 不松手时执行 -->
+  <!-- drop：松开拖拽文件时执行 -->
+  <div class="upload-excel">
+    <div class="btn-upload">
+      <el-button :loading="loading" size="mini" type="primary" @click="handleUpload">
+        点击上传
       </el-button>
+    </div>
+
+    <input ref="excel-upload-input" class="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleClick">
+
+    <div class="drop" @drop="handleDrop" @dragover="handleDragover" @dragenter="handleDragover">
+      <i class="el-icon-upload" />
+      <span>将文件拖到此处</span>
     </div>
   </div>
 </template>
@@ -40,15 +45,16 @@ export default {
       e.stopPropagation()
       e.preventDefault()
       if (this.loading) return
+      // e.dataTransfer.files 获取拖拽时上传的文件
       const files = e.dataTransfer.files
       if (files.length !== 1) {
-        this.$message.error('Only support uploading one file!')
+        this.$message.error('只能上传一个文件!')
         return
       }
       const rawFile = files[0] // only use files[0]
-
+      // 判断上传的是不是excel文件
       if (!this.isExcel(rawFile)) {
-        this.$message.error('Only supports upload .xlsx, .xls, .csv suffix files')
+        this.$message.error('只支持上传 .xlsx, .xls, .csv 格式的文件')
         return false
       }
       this.upload(rawFile)
@@ -56,6 +62,7 @@ export default {
       e.preventDefault()
     },
     handleDragover(e) {
+      // 阻止浏览器的默认行为  不让浏览器给咱们下载
       e.stopPropagation()
       e.preventDefault()
       e.dataTransfer.dropEffect = 'copy'
@@ -70,33 +77,46 @@ export default {
       if (!rawFile) return
       this.upload(rawFile)
     },
+    // 处理上传逻辑
     upload(rawFile) {
-      this.$refs['excel-upload-input'].value = null // fix can't select the same excel
+      // 可以重复上传同名文件
+      this.$refs['excel-upload-input'].value = null
 
+      // 判断你传没传beforeUpload
       if (!this.beforeUpload) {
+        // 如果没传 就不校验文件了，直接解析
         this.readerData(rawFile)
         return
       }
+      // 如果传了校验函数，调用校验函数 校验上传的文件是否合格
       const before = this.beforeUpload(rawFile)
       if (before) {
+        // 校验通过后，解析文件
         this.readerData(rawFile)
       }
     },
     readerData(rawFile) {
       this.loading = true
       return new Promise((resolve, reject) => {
+        // 异步读取文件中的数据
+        // FileReader 文件读取器
         const reader = new FileReader()
+        // onload 读取文件完成
         reader.onload = e => {
+          // 拿到读取的结果
           const data = e.target.result
           const workbook = XLSX.read(data, { type: 'array' })
           const firstSheetName = workbook.SheetNames[0]
           const worksheet = workbook.Sheets[firstSheetName]
+          // 表头
           const header = this.getHeaderRow(worksheet)
+          // excel中的数据
           const results = XLSX.utils.sheet_to_json(worksheet)
           this.generateData({ header, results })
           this.loading = false
           resolve()
         }
+        // readAsArrayBuffer 开始读文件
         reader.readAsArrayBuffer(rawFile)
       })
     },
@@ -122,21 +142,31 @@ export default {
 }
 </script>
 
-<style scoped>
-.excel-upload-input{
-  display: none;
-  z-index: -9999;
-}
-.drop{
-  border: 2px dashed #bbb;
-  width: 600px;
-  height: 160px;
-  line-height: 160px;
-  margin: 0 auto;
-  font-size: 24px;
-  border-radius: 5px;
-  text-align: center;
-  color: #bbb;
-  position: relative;
+<style scoped lang="scss">
+.upload-excel {
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+  .excel-upload-input {
+    display: none;
+    z-index: -9999;
+  }
+  .btn-upload,
+  .drop {
+    border: 1px dashed #bbb;
+    width: 350px;
+    height: 160px;
+    text-align: center;
+    line-height: 160px;
+  }
+  .drop {
+    padding-top: 20px;
+    line-height: 80px;
+    color: #bbb;
+    i {
+      font-size: 60px;
+      display: block;
+    }
+  }
 }
 </style>
