@@ -78,24 +78,57 @@ export default {
     handleDownload() {
       import('@/vendor/Export2Excel').then(async excel => {
         const { data: { rows }} = await getEmployeeListAPI(1, this.total)
-        console.log(rows)
+        // console.log(rows)
+        const headersArr = ['姓名', '手机号', '入职日期', '聘用形式', '转正日期', '工号', '部门']
+        const headersRelations = {
+          '姓名': 'username',
+          '手机号': 'mobile',
+          '入职日期': 'timeOfEntry',
+          '聘用形式': 'formOfEmployment',
+          '转正日期': 'correctionTime',
+          '工号': 'workNumber',
+          '部门': 'departmentName'
+        }
+        const list = this.transListToDoubleList(rows, headersArr, headersRelations)
 
-        // excel.export_json_to_excel({
-        //   // 表头
-        //   header: ['姓名', '性别', '年龄'],
-        //   // data是要导出的数据，并且是一个二维数组
-        //   data: [
-        //     ['张三', '男', 18],
-        //     ['李四', '女', 19],
-        //     ['王五', '男', 48]
-        //   ],
-        //   // 文件名
-        //   filename: '员工信息',
-        //   // 宽度是否自适应
-        //   autoWidth: true,
-        //   bookType: 'xlsx'
-        // })
+        excel.export_json_to_excel({
+          // 表头
+          header: headersArr,
+          // data是要导出的数据，并且是一个二维数组
+          data: list,
+          // 文件名
+          filename: '员工信息',
+          // 宽度是否自适应
+          autoWidth: true,
+          bookType: 'xlsx'
+        })
       })
+    },
+    // 处理二维数组
+    transListToDoubleList(rows, headersArr, headersRelations) {
+      const list = []
+      rows.forEach(item => {
+        const tempArr = []
+        headersArr.forEach(headers => {
+          const englishKey = headersRelations[headers]
+          let value = item[englishKey]
+          // 处理聘用形式
+          if (englishKey === 'formOfEmployment') {
+            const hireType = EnumObj.hireType
+            // find 筛选出符合条件的第一个元素 或者 undefined
+            const result = hireType.find(item => item.id === +value)
+            value = result ? result.value : '未知'
+            // value = this.formateText(undefined, undefined, value, undefined)
+          }
+          // 处理入职日期和转正日期
+          if (['timeOfEntry', 'correctionTime'].includes(englishKey)) {
+            value = this.formateTime(value)
+          }
+          tempArr.push(value)
+        })
+        list.push(tempArr)
+      })
+      return list
     },
     openAddDialog() {
       this.showDialog = true
