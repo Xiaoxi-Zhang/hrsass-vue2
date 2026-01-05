@@ -50,3 +50,16 @@ export const batchAddEmployeeAPI = (list) => {
     data: list
   })
 }
+
+/**
+ * 修改员工信息
+ * @param {*} data 参数
+ * @returns
+ */
+export const editEmployeeAPI = (data) => {
+  return request({
+    url: `/sys/user/${data.id}`,
+    method: 'PUT',
+    data
+  })
+}
