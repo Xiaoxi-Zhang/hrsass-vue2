@@ -1,5 +1,7 @@
 <template>
-  <div class="dashboard-container" />
+  <div class="dashboard-container">
+    <ImageUpload />
+  </div>
 </template>
 
 <script>
