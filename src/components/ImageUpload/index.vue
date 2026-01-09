@@ -1,5 +1,5 @@
 <template>
-  <div class="image-upload" :class="{ disabled:fileList.length>=3 }">
+  <div class="image-upload" :class="{ disabled:fileList.length>=limit }">
     <!-- action: 要把图片上传到哪台服务器（图片服务器的地址）
      自己搭建服务器 一般使用action上传，不使用action时，要把action配置 #
     -->
@@ -8,14 +8,18 @@
     <!-- limit 上传的最大文件数量 -->
     <!-- on-exceed: 超出限制文件数量时执行 -->
     <!-- on-remove: 删除时执行的钩子函数 -->
+    <!-- :http-request 自定义上传 -->
+    <!-- :on-change 文件状态改变，添加文件、上传成功、上传失败都会执行 -->
     <el-upload
-      action="https://jsonplaceholder.typicode.com/posts/"
+      action="#"
       list-type="picture-card"
       :file-list="fileList"
       :on-preview="handlePictureCardPreview"
-      :limit="3"
+      :limit="limit"
       :on-exceed="onExceed"
       :on-remove="handleRemove"
+      :http-request="httpRequest"
+      :on-change="onChange"
     >
       <i class="el-icon-plus" />
     </el-upload>
@@ -26,19 +30,56 @@
 </template>
 
 <script>
+import cos from '@/utils/cos'
+
 export default {
+  props: {
+    limit: {
+      type: Number,
+      default: 1
+    }
+  },
   data() {
     return {
       dialogImageUrl: '',
       dialogVisible: false,
-      fileList: [
-        { url: 'https://img.soogif.com/NyDk1lzDPJ9xyfgF046yfvWMsDaa3hNb.JPEG' },
-        { url: 'https://img0.baidu.com/it/u=4208774388,2073055404&fm=253&app=138&f=JPEG?w=500&h=500' },
-        { url: 'https://picx.zhimg.com/50/v2-7d8a340c514540128cde7fdce5a7e978_720w.webp?source=2c26e567' }
-      ]
+      fileList: []
     }
   },
   methods: {
+    // 文件状态改变时的钩子函数
+    // file: 当前上传的文件
+    // fileList: 当前页面结构中展示的文件列表
+    onChange(file, fileList) {
+      // console.log(file)
+      // console.log(fileList)
+      // 把上传之后的文件 同步给data中的fileList
+      this.fileList = [...fileList]
+    },
+    httpRequest(data) {
+      // console.log(data)
+      // 调用上传方法
+      cos.uploadFile({
+        Bucket: 'hrsass-vue2-1394877896', // 存储桶名称（必须）
+        Region: 'ap-guangzhou', // 存储桶所在的地域
+        Key: `upload/${Date.now()}-${data.file.name}`, // 上传到COS上的文件名称
+        Body: data.file, // 上传文件对象
+        SliceSize: 1024 * 1024 * 5, // 触发分块上传的阈值
+        onProgress: function(progressData) {
+          // 上传的进度
+          console.log(JSON.stringify(progressData))
+        }
+      }, function(err, data) {
+        // 上传之后的结果
+        // err上传失败
+        // data上传成功
+        if (err) {
+          console.log('上传失败', err)
+        } else {
+          console.log('上传成功')
+        }
+      })
+    },
     // 超出限制自动执行这个函数
     onExceed() {
       // console.log('超出限制了')
