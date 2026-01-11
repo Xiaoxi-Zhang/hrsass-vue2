@@ -56,27 +56,31 @@ export default {
       // 把上传之后的文件 同步给data中的fileList
       this.fileList = [...fileList]
     },
-    httpRequest(data) {
+    httpRequest({ file }) {
       // console.log(data)
       // 调用上传方法
       cos.uploadFile({
         Bucket: 'hrsass-vue2-1394877896', // 存储桶名称（必须）
         Region: 'ap-guangzhou', // 存储桶所在的地域
-        Key: `upload/${Date.now()}-${data.file.name}`, // 上传到COS上的文件名称
-        Body: data.file, // 上传文件对象
+        Key: `upload/${Date.now()}-${file.name}`, // 上传到COS上的文件名称
+        Body: file, // 上传文件对象
         SliceSize: 1024 * 1024 * 5, // 触发分块上传的阈值
         onProgress: function(progressData) {
           // 上传的进度
           console.log(JSON.stringify(progressData))
         }
-      }, function(err, data) {
+      }, (err, data) => {
+        console.log('data是啥：', data)
         // 上传之后的结果
         // err上传失败
         // data上传成功
         if (err) {
-          console.log('上传失败', err)
+          this.$message.console.error('上传失败，请稍后再试')
         } else {
-          console.log('上传成功')
+          // console.log('上传成功')
+          const curFile = this.fileList.find(item => item.uid === file.uid)
+          curFile.status = 'success'
+          curFile.url = '//' + data.Location
         }
       })
     },
