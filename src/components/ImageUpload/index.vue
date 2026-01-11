@@ -57,7 +57,9 @@ export default {
       this.fileList = [...fileList]
     },
     httpRequest({ file }) {
-      // console.log(data)
+      // console.log(file)
+      const curFile = this.fileList.find(item => item.uid === file.uid)
+      curFile.status = 'uploading'
       // 调用上传方法
       cos.uploadFile({
         Bucket: 'hrsass-vue2-1394877896', // 存储桶名称（必须）
@@ -67,10 +69,10 @@ export default {
         SliceSize: 1024 * 1024 * 5, // 触发分块上传的阈值
         onProgress: function(progressData) {
           // 上传的进度
-          console.log(JSON.stringify(progressData))
+          // console.log(JSON.stringify(progressData))
+          curFile.percentage = progressData.percent * 100
         }
       }, (err, data) => {
-        console.log('data是啥：', data)
         // 上传之后的结果
         // err上传失败
         // data上传成功
@@ -78,8 +80,11 @@ export default {
           this.$message.console.error('上传失败，请稍后再试')
         } else {
           // console.log('上传成功')
-          const curFile = this.fileList.find(item => item.uid === file.uid)
-          curFile.status = 'success'
+          // 延迟的目的，让进度条明显一点
+          setTimeout(() => {
+            curFile.status = 'success'
+          }, 500)
+          // '//' 会默认跟你网站的协议保持统一
           curFile.url = '//' + data.Location
         }
       })

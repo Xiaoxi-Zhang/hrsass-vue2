@@ -23,7 +23,9 @@
               class="inputW"
             />
           </el-form-item>
-          <el-form-item label="员工头像" />
+          <el-form-item label="员工头像">
+            <ImageUpload ref="staffPhoto" />
+          </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="editEmployee">更新</el-button>
           </el-form-item>
@@ -61,14 +63,21 @@ export default {
     editEmployee() {
       this.$refs.userForm.validate(async flag => {
         if (!flag) return
+        // 先获取头像，获取头像 赋值给 userInfo
+        const staffPhoto = this.refs.staffPhoto.fileList[0].url
+        this.userInfo.staffPhoto = staffPhoto
         await editEmployeeAPI(this.userInfo)
         this.$message.success('更新员工信息成功')
       })
     },
+    // 获取员工信息
     async getUserAvatar() {
       const res = await getUserAvatarAPI(this.id)
       // console.log(res)
       this.userInfo = res.data
+      this.$refs.staffPhoto.fileList = [
+        { url: res.data.staffPhoto }
+      ]
     }
   }
 }
