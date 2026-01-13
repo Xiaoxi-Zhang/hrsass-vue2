@@ -46,6 +46,11 @@ export default {
       fileList: []
     }
   },
+  computed: {
+    isAllUploadSuccess() {
+      return this.fileList.every(item => item.status === 'success')
+    }
+  },
   methods: {
     // 文件状态改变时的钩子函数
     // file: 当前上传的文件

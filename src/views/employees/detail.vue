@@ -64,8 +64,18 @@ export default {
       this.$refs.userForm.validate(async flag => {
         if (!flag) return
         // 先获取头像，获取头像 赋值给 userInfo
-        const staffPhoto = this.refs.staffPhoto.fileList[0].url
-        this.userInfo.staffPhoto = staffPhoto
+        const staffPhoto = this.$refs.staffPhoto
+        // 处理上传中的逻辑
+        if (!staffPhoto.isAllUploadSuccess) {
+          this.$message.warning('图片正在上传中，请上传完后再更新')
+          return
+        }
+        if (staffPhoto.fileList[0]?.url) {
+          this.userInfo.staffPhoto = staffPhoto.fileList[0].url
+        } else {
+          this.$message.warning('头像不能为空')
+          return
+        }
         await editEmployeeAPI(this.userInfo)
         this.$message.success('更新员工信息成功')
       })
