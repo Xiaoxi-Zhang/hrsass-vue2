@@ -36,7 +36,7 @@
           <el-table-column label="操作" fixed="right" width="280">
             <template #default="{ row }">
               <el-button type="text" size="small" @click="$router.push(`/employees/detail?id=${row.id}`)">查看</el-button>
-              <el-button type="text" size="small">分配角色</el-button>
+              <el-button type="text" size="small" @click="showRoleDialogFn(row.id)">分配角色</el-button>
               <el-button type="text" size="small" @click="del(row.id)">删除</el-button>
             </template>
           </el-table-column>
@@ -54,6 +54,7 @@
         </div>
       </el-card>
       <addEmployee :show-dialog.sync="showDialog" />
+      <assignRole :show-role-dialog.sync="showRoleDialog" :user-id="userId" />
     </div>
   </div>
 </template>
@@ -65,11 +66,13 @@ import dayjs from 'dayjs'
 import addEmployee from './components/add-employee.vue'
 import defaultImg from '@/assets/common/emo.jpg'
 import notFoundImg from '@/assets/common/cai.jpg'
+import assignRole from './components/assign-role.vue'
 
 export default {
   name: 'Employees',
   components: {
-    addEmployee
+    addEmployee,
+    assignRole
   },
   data() {
     return {
@@ -82,13 +85,25 @@ export default {
       // 没有图片地址 要展示默认图
       defaultImg,
       // 有图片地址，但是图片地址无法加载图片
-      notFoundImg
+      notFoundImg,
+      // 控制分配权限弹框的隐藏和展示
+      showRoleDialog: false,
+      // 当前点击的用户id
+      userId: ''
     }
   },
   created() {
     this.getEmployeeList()
   },
   methods: {
+    // 展示分配权限弹框
+    showRoleDialogFn(id) {
+      // console.log(id)
+      // 1.展示弹框
+      this.showRoleDialog = true
+      // 2.接受到的id传给子组件
+      this.userId = id
+    },
     // 下载excel文件
     handleDownload() {
       import('@/vendor/Export2Excel').then(async excel => {
