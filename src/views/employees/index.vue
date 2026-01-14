@@ -6,7 +6,11 @@
           <span>总记录数: {{ total }} 条</span>
         </template>
         <template #right>
-          <el-button type="warning" size="small" @click="$router.push('/import/index?type=employee')">excel导入</el-button>
+          <el-button
+            type="warning"
+            size="small"
+            @click="$router.push('/import/index?type=employee')"
+          >excel导入</el-button>
           <el-button type="danger" size="small" @click="handleDownload">excel导出</el-button>
           <el-button type="primary" size="small" @click="openAddDialog">新增员工</el-button>
         </template>
@@ -15,17 +19,22 @@
         <el-table border :data="list">
           <el-table-column label="序号" type="index" :index="indexMethod" width="100" />
           <el-table-column label="姓名" prop="username" />
+          <el-table-column label="头像" prop="staffPhoto">
+            <template #default="{ row }">
+              <img v-imgError="notFoundImg" :src="row.staffPhoto || defaultImg" class="img_box">
+            </template>
+          </el-table-column>
           <el-table-column label="手机号" prop="mobile" />
           <el-table-column label="工号" prop="workNumber" />
           <el-table-column label="聘用形式" prop="formOfEmployment" :formatter="formateText" />
           <el-table-column label="部门" prop="departmentName" />
           <el-table-column label="入职时间">
-            <template #default="{row}">
+            <template #default="{ row }">
               {{ formateTime(row.timeOfEntry) }}
             </template>
           </el-table-column>
           <el-table-column label="操作" fixed="right" width="280">
-            <template #default="{row}">
+            <template #default="{ row }">
               <el-button type="text" size="small" @click="$router.push(`/employees/detail?id=${row.id}`)">查看</el-button>
               <el-button type="text" size="small">分配角色</el-button>
               <el-button type="text" size="small" @click="del(row.id)">删除</el-button>
@@ -54,6 +63,8 @@ import { getEmployeeListAPI, delEmployeeAPI } from '@/api/employees'
 import EnumObj from '@/constant/employees'
 import dayjs from 'dayjs'
 import addEmployee from './components/add-employee.vue'
+import defaultImg from '@/assets/common/emo.jpg'
+import notFoundImg from '@/assets/common/cai.jpg'
 
 export default {
   name: 'Employees',
@@ -67,7 +78,11 @@ export default {
       total: 0,
       list: [],
       isLoading: false,
-      showDialog: false
+      showDialog: false,
+      // 没有图片地址 要展示默认图
+      defaultImg,
+      // 有图片地址，但是图片地址无法加载图片
+      notFoundImg
     }
   },
   created() {
@@ -145,7 +160,7 @@ export default {
           this.page--
         }
         this.getEmployeeList()
-      }).catch(() => {})
+      }).catch(() => { })
     },
     formateTime(time) {
       return time ? dayjs(time).format('YYYY-MM-DD') : ''
@@ -181,4 +196,9 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.img_box {
+  width: 100px;
+  height: 100px;
+}
+</style>
