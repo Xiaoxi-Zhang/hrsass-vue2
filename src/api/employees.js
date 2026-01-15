@@ -63,3 +63,17 @@ export const editEmployeeAPI = (data) => {
     data
   })
 }
+
+/**
+ * 分配用户角色信息
+ * @param {*} id
+ * @param {*} roleIds
+ * @returns
+ */
+export const assignRoleAPI = (id, roleIds) => {
+  return request({
+    url: '/sys/user/assignRoles',
+    method: 'PUt',
+    data: { id, roleIds }
+  })
+}

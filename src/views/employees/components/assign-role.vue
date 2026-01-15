@@ -15,7 +15,7 @@
     </el-checkbox-group>
 
     <template #footer>
-      <el-button type="primary" size="small">确定</el-button>
+      <el-button type="primary" size="small" @click="assignRole">确定</el-button>
       <el-button size="small" @click="closeRoleDialog">取消</el-button>
     </template>
   </el-dialog>
@@ -24,6 +24,7 @@
 <script>
 import { getRoleListAPI } from '@/api/setting'
 import { getUserAvatarAPI } from '@/api/user'
+import { assignRoleAPI } from '@/api/employees'
 
 export default {
   props: {
@@ -44,6 +45,12 @@ export default {
     }
   },
   methods: {
+    async assignRole() {
+      const res = await assignRoleAPI(this.userId, this.roleIds)
+      // console.log(res)
+      this.$message.success('分配角色成功')
+      this.closeRoleDialog()
+    },
     openDialog() {
       this.getRoleList()
       this.getUserRole()
