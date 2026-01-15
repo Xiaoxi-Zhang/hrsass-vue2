@@ -8,7 +8,7 @@
     @open="openDialog"
   >
     <!-- 这里准备复选框 -->
-    <el-checkbox-group v-model="roleIds">
+    <el-checkbox-group v-model="roleIds" v-loading="isLoading">
       <el-checkbox v-for="item in roleList" :key="item.id" :label="item.id">
         {{ item.name }}
       </el-checkbox>
@@ -41,7 +41,8 @@ export default {
   data() {
     return {
       roleIds: [],
-      roleList: []
+      roleList: [],
+      isLoading: false
     }
   },
   methods: {
@@ -51,9 +52,11 @@ export default {
       this.$message.success('分配角色成功')
       this.closeRoleDialog()
     },
-    openDialog() {
-      this.getRoleList()
-      this.getUserRole()
+    async openDialog() {
+      this.isLoading = true
+      await this.getRoleList()
+      await this.getUserRole()
+      this.isLoading = false
     },
     // 获取用户原本的角色信息
     async getUserRole() {
