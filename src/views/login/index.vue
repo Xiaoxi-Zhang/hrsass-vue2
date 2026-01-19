@@ -79,7 +79,7 @@ export default {
     return {
       loginForm: {
         mobile: '13800000002',
-        password: process.env.VUE_APP_BASE_TARGET.includes('java') ? '929itheima.CN032@.20260116' : 'hm#qd@23'
+        password: process.env.VUE_APP_BASE_TARGET.includes('java') ? '929itheima.CN032@.20260119' : 'hm#qd@23'
       },
       loginRules: {
         mobile: [

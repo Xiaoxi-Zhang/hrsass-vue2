@@ -14,7 +14,7 @@
               <el-table-column label="描述" prop="description" />
               <el-table-column label="操作">
                 <template #default="{ row }">
-                  <el-button size="small" type="success">分配权限</el-button>
+                  <el-button size="small" type="success" @click="assignPermission(row.id)">分配权限</el-button>
                   <el-button size="small" type="primary" @click="editRole(row.id)">编辑</el-button>
                   <el-button size="small" type="danger" @click="delRole(row.id)">删除</el-button>
                 </template>
@@ -77,6 +77,18 @@
           <el-button type="primary" @click="confirmAddRole">确认</el-button>
         </template>
       </el-dialog>
+      <!-- 分配权限的弹层 -->
+      <el-dialog title="分配权限" :visible="showAssignDialog" :close-on-click-modal="false" @close="closeAssignDialog" @open="getPermissionList">
+        <!-- show-checkbox 展示树状复选框
+          :check-strictly 让父子不关联 -->
+        <el-tree show-checkbox :data="permissionList" :props="{label:'name'}" :check-strictly="true" default-expand-all />
+        <template #footer>
+          <div style="text-align: right;">
+            <el-button @click="closeAssignDialog">取消</el-button>
+            <el-button type="primary">确定</el-button>
+          </div>
+        </template>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -84,6 +96,8 @@
 <script>
 import { getRoleListAPI, delRoleAPI, addRoleAPI, getRoleDetailAPI, editRoleAPI } from '@/api/setting'
 import { getCompanyAPI } from '@/api/company'
+import { getPermissionListAPI } from '@/api/permission'
+import { transListToTreeData } from '@/utils/index'
 
 export default {
   name: 'Setting',
@@ -107,7 +121,12 @@ export default {
           { required: true, message: '请输入角色描述', trigger: 'blur' }
         ]
       },
-      companyInfo: {}
+      companyInfo: {},
+      // 控制分配权限的弹层的隐藏和展示
+      showAssignDialog: false,
+      // 点击时的角色id
+      roleId: '',
+      permissionList: []
     }
   },
   computed: {
@@ -124,6 +143,19 @@ export default {
     this.getCompany()
   },
   methods: {
+    async getPermissionList() {
+      const { data } = await getPermissionListAPI()
+      this.permissionList = transListToTreeData(data, '0')
+    },
+    // 分配权限
+    assignPermission(id) {
+      this.showAssignDialog = true
+      this.roleId = id
+    },
+    // 控制分配权限的弹层的隐藏
+    closeAssignDialog() {
+      this.showAssignDialog = false
+    },
     async getCompany() {
       const companyId = this.$store.state.user.userInfo.companyId
       const res = await getCompanyAPI(companyId)
