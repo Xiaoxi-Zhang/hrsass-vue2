@@ -38,12 +38,7 @@
 
           <el-tab-pane label="公司信息">
             <!-- 警告信息 -->
-            <el-alert
-              title="对公司名称、公司地址、营业执照、公司地区的更新，将使得公司资料被重新审核，请谨慎修改"
-              type="info"
-              show-icon
-              :closable="false"
-            />
+            <el-alert title="对公司名称、公司地址、营业执照、公司地区的更新，将使得公司资料被重新审核，请谨慎修改" type="info" show-icon :closable="false" />
             <!-- 表单 -->
             <el-form label-width="120px" style="margin-top:50px">
               <el-form-item label="公司名称">
@@ -78,14 +73,29 @@
         </template>
       </el-dialog>
       <!-- 分配权限的弹层 -->
-      <el-dialog title="分配权限" :visible="showAssignDialog" :close-on-click-modal="false" @close="closeAssignDialog" @open="getPermissionList">
+      <el-dialog
+        title="分配权限"
+        :visible="showAssignDialog"
+        :close-on-click-modal="false"
+        @close="closeAssignDialog"
+        @open="getPermissionList"
+      >
         <!-- show-checkbox 展示树状复选框
           :check-strictly 让父子不关联 -->
-        <el-tree show-checkbox :data="permissionList" :props="{label:'name'}" :check-strictly="true" default-expand-all />
+        <el-tree
+          ref="tree"
+          v-loading="treeLoading"
+          show-checkbox
+          :data="permissionList"
+          :props="{ label: 'name' }"
+          :check-strictly="true"
+          default-expand-all
+          node-key="id"
+        />
         <template #footer>
           <div style="text-align: right;">
             <el-button @click="closeAssignDialog">取消</el-button>
-            <el-button type="primary">确定</el-button>
+            <el-button type="primary" @click="confirmAssign">确定</el-button>
           </div>
         </template>
       </el-dialog>
@@ -94,7 +104,7 @@
 </template>
 
 <script>
-import { getRoleListAPI, delRoleAPI, addRoleAPI, getRoleDetailAPI, editRoleAPI } from '@/api/setting'
+import { getRoleListAPI, delRoleAPI, addRoleAPI, getRoleDetailAPI, editRoleAPI, assignPermissionAPI } from '@/api/setting'
 import { getCompanyAPI } from '@/api/company'
 import { getPermissionListAPI } from '@/api/permission'
 import { transListToTreeData } from '@/utils/index'
@@ -126,7 +136,9 @@ export default {
       showAssignDialog: false,
       // 点击时的角色id
       roleId: '',
-      permissionList: []
+      permissionList: [],
+      // 树状结构的加载状态
+      treeLoading: false
     }
   },
   computed: {
@@ -143,9 +155,21 @@ export default {
     this.getCompany()
   },
   methods: {
+    async confirmAssign() {
+      const permIds = this.$refs.tree.getCheckedKeys()
+      await assignPermissionAPI({ id: this.roleId, permIds: permIds })
+      this.$message.success('分配权限成功')
+      this.closeAssignDialog()
+    },
+    // 获取权限列表
     async getPermissionList() {
+      this.treeLoading = true
       const { data } = await getPermissionListAPI()
       this.permissionList = transListToTreeData(data, '0')
+      const { data: { permIds }} = await getRoleDetailAPI(this.roleId)
+      // console.log(permIds)
+      this.$refs.tree.setCheckedKeys(permIds)
+      this.treeLoading = false
     },
     // 分配权限
     assignPermission(id) {

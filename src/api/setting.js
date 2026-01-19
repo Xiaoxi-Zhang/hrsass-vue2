@@ -61,3 +61,16 @@ export const editRoleAPI = (data) => {
     data
   })
 }
+
+/**
+ * 分配权限
+ * @param {*} data
+ * @returns
+ */
+export const assignPermissionAPI = (data) => {
+  return request({
+    url: '/sys/role/assignPrem',
+    method: 'PUT',
+    data
+  })
+}
