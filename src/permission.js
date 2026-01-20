@@ -33,8 +33,8 @@ router.beforeEach(async(to, from, next) => {
         // 5.拿到筛选后的动态路由添加到路由规则中
         // addRoutes在添加路由规则时，是一个异步的过程
         // 在执行next的时候，一定要确保路由规则添加完成
-        router.addRoutes(otherRoutes)
-        store.commit('routes/setRoutes', otherRoutes)
+        router.addRoutes([...otherRoutes, { path: '*', redirect: '/404', hidden: true }])
+        store.commit('routes/setRoutes', [...otherRoutes, { path: '*', redirect: '/404', hidden: true }])
         // 下面这个方案就可以等待addRoutes异步执行完成之后再进行跳转
         // 可以理解成再重新进一次页面
         next({
