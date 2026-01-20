@@ -28,12 +28,14 @@ export default {
   components: { SidebarItem, Logo },
   computed: {
     ...mapGetters([
-      'sidebar'
+      'sidebar',
+      'routes'
     ]),
-    routes() {
-      // 获取的是创建路由对象时，传入的路由规则
-      return this.$router.options.routes
-    },
+    // routes() {
+    //   // 获取的是创建路由对象时，传入的路由规则
+    //   // 原因：this.$router.options.routes 不是响应式的，addRoutes之后，拿不到最新添加的路由规则
+    //   return this.$router.options.routes
+    // },
     activeMenu() {
       const route = this.$route
       const { meta, path } = route

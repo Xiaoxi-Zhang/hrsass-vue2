@@ -64,16 +64,18 @@ export const constantRoutes = [
         hidden: true
       }
     ]
-  },
+  }
 
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  // 如果使用addRoutes()动态添加路由 path：* 一定要配置到最后
+  // { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: [...constantRoutes, ...asyncRoutes]
+  // 做权限的时候，去掉动态路由的合并
+  routes: [...constantRoutes]
 })
 
 // 通过方法来创建路由对象 封装方法的原因：为了复用
