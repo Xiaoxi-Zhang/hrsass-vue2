@@ -41,6 +41,7 @@
 import { mapGetters } from 'vuex'
 // import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { resetRouter } from '@/router'
 
 export default {
   components: {
@@ -74,6 +75,10 @@ export default {
     logout() {
       // 清楚token、清楚用户信息、清楚cookies
       this.$store.commit('user/logOut')
+      // 1.清空路由对象中的路由规则
+      resetRouter()
+      // 2.清空vuex中的路由规则
+      this.$store.commit('routes/setRoutes', [])
       // this.$route.fullPath 获取当前路径
       // /login?redirect=${this.$route.fullPath} 退出的时候，记录下你是在哪个页面退出的
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
