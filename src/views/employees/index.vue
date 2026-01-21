@@ -68,7 +68,9 @@ import addEmployee from './components/add-employee.vue'
 import defaultImg from '@/assets/common/emo.jpg'
 import notFoundImg from '@/assets/common/cai.jpg'
 import assignRole from './components/assign-role.vue'
-import { mapGetters } from 'vuex'
+
+// 1.先导入mixins文件
+import permission from '@/mixins/permission'
 
 export default {
   name: 'Employees',
@@ -76,6 +78,8 @@ export default {
     addEmployee,
     assignRole
   },
+  // 2.混入
+  mixins: [permission],
   data() {
     return {
       page: 1,
@@ -94,16 +98,10 @@ export default {
       userId: ''
     }
   },
-  computed: {
-    ...mapGetters(['roles'])
-  },
   created() {
     this.getEmployeeList()
   },
   methods: {
-    hasPermission(point) {
-      return this.roles?.points.includes(point)
-    },
     // 展示分配权限弹框
     showRoleDialogFn(id) {
       // console.log(id)
