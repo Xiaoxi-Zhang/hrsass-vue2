@@ -1,4 +1,5 @@
 // import Vue from 'vue'
+import store from '@/store'
 
 // 第一种写法
 // Vue.directive('imgError', {
@@ -19,6 +20,18 @@ export const imgError = {
   inserted(el, binding) {
     el.onerror = () => {
       el.src = binding.value
+    }
+  }
+}
+
+export const permission = {
+  inserted(el, binding) {
+    // 1.先获取用户对应的权限标识
+    const roles = store.getters.roles
+    // 2. 按钮所对应的权限标识 binding.value
+    if (!roles?.points.includes(binding.value)) {
+      // el.style.display = 'none'
+      el.remove()
     }
   }
 }

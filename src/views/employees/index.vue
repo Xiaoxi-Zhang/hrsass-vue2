@@ -7,13 +7,13 @@
         </template>
         <template #right>
           <el-button
-            v-if="hasPermission('excel_import')"
+            v-permission="'excel_import'"
             type="warning"
             size="small"
             @click="$router.push('/import/index?type=employee')"
           >excel导入</el-button>
-          <el-button v-if="hasPermission('excel_export')" type="danger" size="small" @click="handleDownload">excel导出</el-button>
-          <el-button v-if="hasPermission('emp_add')" type="primary" size="small" @click="openAddDialog">新增员工</el-button>
+          <el-button v-permission="'excel_export'" type="danger" size="small" @click="handleDownload">excel导出</el-button>
+          <el-button v-permission="'emp_add'" type="primary" size="small" @click="openAddDialog">新增员工</el-button>
         </template>
       </page-tools>
       <el-card v-loading="isLoading" style="margin-top: 10px">
@@ -36,9 +36,9 @@
           </el-table-column>
           <el-table-column label="操作" fixed="right" width="280">
             <template #default="{ row }">
-              <el-button v-if="hasPermission('emp_edit')" type="text" size="small" @click="$router.push(`/employees/detail?id=${row.id}`)">查看</el-button>
-              <el-button v-if="hasPermission('assign_role')" type="text" size="small" @click="showRoleDialogFn(row.id)">分配角色</el-button>
-              <el-button v-if="hasPermission('emp_delete')" type="text" size="small" @click="del(row.id)">删除</el-button>
+              <el-button v-permission="'emp_edit'" type="text" size="small" @click="$router.push(`/employees/detail?id=${row.id}`)">查看</el-button>
+              <el-button v-permission="'assign_role'" type="text" size="small" @click="showRoleDialogFn(row.id)">分配角色</el-button>
+              <el-button v-permission="'emp_delete'" type="text" size="small" @click="del(row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
