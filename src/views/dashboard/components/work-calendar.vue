@@ -53,6 +53,13 @@ export default {
       return arr
     }
   },
+  watch: {
+    currentDate(newVal) {
+      // console.log(newVal)
+      this.currentYear = new Date(newVal).getFullYear()
+      this.currentMonth = new Date(newVal).getMonth() + 1
+    }
+  },
   created() {
     this.currentYear = this.startDate.getFullYear() // 得到当前年份
     this.currentMonth = this.startDate.getMonth() + 1 // 当前月份
@@ -65,7 +72,7 @@ export default {
       }
     },
     getDate(date) {
-      return new Date(date).getDay()
+      return new Date(date).getDate()
     },
     changeDate() {
       this.currentDate = new Date(`${this.currentYear}-${this.currentMonth}-1`)
