@@ -11,7 +11,14 @@
       </el-select>
     </div>
     <!-- el-calendar跟select-box是同级的元素 -->
-    <el-calendar v-model="currentDate" />
+    <el-calendar v-model="currentDate">
+      <template #dateCell="{date}">
+        <div class="date-content">
+          <span class="text">{{ getDate(date) }}</span>
+          <span v-if="isweek(date)" class="rest">休</span>
+        </div>
+      </template>
+    </el-calendar>
   </div>
 </template>
 
@@ -51,6 +58,15 @@ export default {
     this.currentMonth = this.startDate.getMonth() + 1 // 当前月份
   },
   methods: {
+    isweek(date) {
+      const day = new Date(date).getDay()
+      if ([0, 6].includes(day)) {
+        return true
+      }
+    },
+    getDate(date) {
+      return new Date(date).getDay()
+    },
     changeDate() {
       this.currentDate = new Date(`${this.currentYear}-${this.currentMonth}-1`)
     }
