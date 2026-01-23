@@ -87,7 +87,8 @@
           <div slot="header" class="header">
             <span>绩效指数</span>
           </div>
-        <!-- 放置雷达图 -->
+          <!-- 放置雷达图 -->
+          <randar />
         </el-card>
         <!-- 帮助连接 -->
         <el-card class="box-card">
@@ -126,11 +127,13 @@
 import { mapGetters } from 'vuex'
 import cai from '@/assets/common/cai.jpg'
 import workCalendar from './components/work-calendar.vue'
+import randar from './components/radar.vue'
 
 export default {
   name: 'Dashboard',
   components: {
-    workCalendar
+    workCalendar,
+    randar
   },
   data() {
     return {
