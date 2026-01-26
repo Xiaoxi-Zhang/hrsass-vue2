@@ -16,6 +16,20 @@ const name = defaultSettings.title || 'vue Admin Template' // page title
 // vue.config.js 不属于客户端代码，所以可以读到不以Vue_APP_开头的环境变量
 const port = process.env.VUE_APP_PORT
 
+// const cdn = {
+//   css: [
+//     'https://unpkg.com/element-ui/lib/theme-chalk/index.css' // element-ui css 样式表
+//   ],
+//   js: [
+//     // vue must at first!
+//     'https://cdn.jsdelivr.net/npm/vue@2.6.14', // vuejs
+//     'https://unpkg.com/element-ui/lib/index.js', // element-ui js
+//     'https://cdn.jsdelivr.net/npm/xlsx@0.16.6/dist/jszip.min.js',
+//     'https://cdn.jsdelivr.net/npm/xlsx@0.16.6/dist/xlsx.full.min.js',
+//     'https://cdn.jsdelivr.net/npm/cos-js-sdk-v5/dist/cos-js-sdk-v5.min.js'
+//   ]
+// }
+
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
   /**
@@ -51,6 +65,14 @@ module.exports = {
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
+    // externals: {
+    // // key(要排除的包名), value(引入的CDN包的全局变量名)
+    //   'vue': 'Vue',
+    //   'element-ui': 'ELEMENT',
+    //   'xlsx': 'XLSX',
+    //   'cos-js-sdk-v5': 'COS'
+    // },
+
     name: name,
     resolve: {
       alias: {
@@ -69,6 +91,12 @@ module.exports = {
         include: 'initial'
       }
     ])
+
+    // 注入cdn变量 (打包时会执行)
+    // config.plugin('html').tap(args => {
+    //   args[0].cdn = cdn // 配置cdn给插件
+    //   return args
+    // })
 
     // when there are many pages, it will cause too many meaningless requests
     config.plugins.delete('prefetch')

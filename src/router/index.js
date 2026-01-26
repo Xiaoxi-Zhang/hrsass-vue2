@@ -72,7 +72,7 @@ export const constantRoutes = [
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   // 做权限的时候，去掉动态路由的合并
   routes: [...constantRoutes]
