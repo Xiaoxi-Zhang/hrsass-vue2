@@ -2,20 +2,18 @@
   <div v-loading="loading" class="dashboard-container">
     <div class="app-container">
       <!-- 工具栏 -->
-      <page-tools :show-before="true">
+      <social-tool :show-before="true">
         <template v-slot:before>
-          本月{{ tips.dateRange }}：社保在缴 {{ tips.socialSecurityCount }} 公积金在缴 {{ tips.providentFundCount }} 增员 {{
-            tips.newsCount }} 减员 {{ tips.reducesCount }} 入职 {{ tips.worksCount }} 离职 {{ tips.leavesCount }}
+          本月{{ tips.dateRange }}：社保在缴 {{ tips.socialSecurityCount }} 公积金在缴 {{ tips.providentFundCount }} 增员 {{ tips.newsCount }} 减员 {{ tips.reducesCount }} 入职 {{ tips.worksCount }} 离职 {{ tips.leavesCount }}
         </template>
         <template v-slot:after>
-          <el-button size="mini" type="danger">历史归档</el-button>
-          <el-button size="mini" type="primary">{{ yearMonth }}报表</el-button>
+          <el-button size="mini" type="danger" @click="$router.push('/social_securitys/historicalArchiving')">历史归档</el-button>
+          <el-button size="mini" type="primary" @click="$router.push(`/social_securitys/monthStatement?yearMonth=${yearMonth}`)">{{ yearMonth }}报表</el-button>
         </template>
-      </page-tools>
+      </social-tool>
       <!-- 筛选组件 -->
-      <social-tool />
       <el-card class="hr-block">
-        <el-table :data="list" style="width: 100%" :default-sort="{ prop: 'date', order: 'descending' }">
+        <el-table :data="list" style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">
           <el-table-column type="index" width="50" label="序号" />
           <el-table-column prop="username" label="姓名" sortable />
           <el-table-column prop="mobile" label="手机" sortable />
@@ -28,8 +26,8 @@
           <el-table-column prop="socialSecurityBase" label="社保基数" />
           <el-table-column prop="providentFundBase" label="公积金基数" />
           <el-table-column label="操作">
-            <template>
-              <el-button type="text" size="mini">查看详情</el-button>
+            <template v-slot:default="obj">
+              <el-button type="text" size="mini" @click="$router.push(`/social_securitys/detail/${obj.row.id}`)">查看详情</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -39,8 +37,7 @@
             :current-page="page.page"
             :page-size="page.pageSize"
             layout="prev, pager, next"
-            background
-            @current-change="handleCurrentChange"
+            @current-change="pageChange"
           />
         </el-row>
       </el-card>
@@ -50,15 +47,25 @@
 </template>
 
 <script>
-import { getSocialListAPI, getSettingsAPI } from '@/api/social'
+import { getSocialList, getSettings } from '@/api/social'
+import SocialTool from './components/social-tool'
 
 export default {
   name: 'SocialTableIndex',
+  components: { SocialTool },
 
   data() {
     return {
       list: [],
-      tips: {},
+      tips: {
+        dateRange: '范围',
+        socialSecurityCount: 0,
+        providentFundCount: 0,
+        newsCount: 0,
+        reducesCount: 0,
+        worksCount: 0,
+        leavesCount: 0
+      },
       yearMonth: '',
       page: {
         page: 1,
@@ -75,13 +82,16 @@ export default {
   },
   methods: {
     async getSettings() {
-      const { dataMonth } = await getSettingsAPI()
+      const { dataMonth } = await getSettings()
       this.yearMonth = dataMonth
+    },
+    goDetail(row, event, column) {
+      this.$router.push({ path: 'detail' })
     },
     async getSocialList() {
       this.loading = true
       try {
-        const { data: { rows, total }} = await getSocialListAPI({ ...this.page, ...this.selectParams })
+        const { data: { rows, total }} = await getSocialList({ ...this.page, ...this.selectParams })
         this.list = rows
         this.page.total = total
       } catch (error) {
@@ -90,11 +100,17 @@ export default {
         this.loading = false
       }
     },
-    handleCurrentChange(val) {
+    changeSelectParams(selectParams) {
+      this.selectParams.departmentChecks = selectParams.departmentChecks
+      this.selectParams.providentFundChecks = selectParams.providentFundChecks
+      this.selectParams.socialSecurityChecks = selectParams.socialSecurityChecks
+      this.page.page = 1
+      this.getSocialList()
+    },
+    pageChange(val) {
       this.page.page = val
       this.getSocialList()
     }
-
   }
 }
 </script>
