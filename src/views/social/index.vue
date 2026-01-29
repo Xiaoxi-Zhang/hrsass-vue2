@@ -2,16 +2,20 @@
   <div v-loading="loading" class="dashboard-container">
     <div class="app-container">
       <!-- 工具栏 -->
-      <social-tool :show-before="true">
-        <template v-slot:before>
-          本月{{ tips.dateRange }}：社保在缴 {{ tips.socialSecurityCount }} 公积金在缴 {{ tips.providentFundCount }} 增员 {{ tips.newsCount }} 减员 {{ tips.reducesCount }} 入职 {{ tips.worksCount }} 离职 {{ tips.leavesCount }}
+      <page-tools>
+        <template #left>
+          <span>
+            本月{{ tips.dateRange }}：社保在缴 {{ tips.socialSecurityCount }} 公积金在缴 {{ tips.providentFundCount }} 增员 {{ tips.newsCount }} 减员 {{ tips.reducesCount }} 入职 {{ tips.worksCount }} 离职 {{ tips.leavesCount }}
+          </span>
         </template>
-        <template v-slot:after>
+        <template #right>
           <el-button size="mini" type="danger" @click="$router.push('/social_securitys/historicalArchiving')">历史归档</el-button>
           <el-button size="mini" type="primary" @click="$router.push(`/social_securitys/monthStatement?yearMonth=${yearMonth}`)">{{ yearMonth }}报表</el-button>
         </template>
-      </social-tool>
+      </page-tools>
+
       <!-- 筛选组件 -->
+      <social-tool />
       <el-card class="hr-block">
         <el-table :data="list" style="width: 100%" :default-sort="{prop: 'date', order: 'descending'}">
           <el-table-column type="index" width="50" label="序号" />
@@ -56,7 +60,6 @@ export default {
 
   data() {
     return {
-      list: [],
       tips: {
         dateRange: '范围',
         socialSecurityCount: 0,
@@ -66,6 +69,7 @@ export default {
         worksCount: 0,
         leavesCount: 0
       },
+      list: [],
       yearMonth: '',
       page: {
         page: 1,

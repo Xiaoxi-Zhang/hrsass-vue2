@@ -1,18 +1,18 @@
 <template>
   <div class="cont-top-box">
     <el-form label-width="100px">
-      <el-form-item label="部门">
+      <el-form-item label="部门:">
         <el-checkbox-group v-model="departmentChecks" style="display:inline-block">
           <el-checkbox v-for="item in departmentList" :key="item.id" :label="item.id" @change="checkChange">{{ item.name }}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
-      <el-form-item label="社保城市">
+      <el-form-item label="社保城市:">
         <el-checkbox-group v-model="socialSecurityChecks" style="display:inline-block">
           <el-checkbox v-for="item in cityList" :key="item.id" :label="item.id" @change="checkChange">{{ item.name }}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
 
-      <el-form-item label="公积金城市">
+      <el-form-item label="公积金城市:">
         <el-checkbox-group v-model="providentFundChecks" style="display:inline-block">
           <el-checkbox v-for="item in cityList" :key="item.id" :label="item.id" @change="checkChange">{{ item.name }}</el-checkbox>
         </el-checkbox-group>
@@ -29,7 +29,6 @@ export default {
   name: 'SocialTool',
   data() {
     return {
-      tips: {},
       keyword: '',
       departmentChecks: [],
       socialSecurityChecks: [],

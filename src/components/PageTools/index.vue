@@ -14,6 +14,14 @@
         <!-- 右侧 -->
         <slot name="right" />
       </div>
+      <div class="before">
+        <!-- 顶部 -->
+        <slot name="before" />
+      </div>
+      <div class="after">
+        <!-- 底部 -->
+        <slot name="after" />
+      </div>
     </div>
   </el-card>
 </template>
